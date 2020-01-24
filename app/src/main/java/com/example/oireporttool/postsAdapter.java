@@ -17,11 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.oireporttool.Database.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandler> {
     private Context context;
-    private List<Post> postList;
+    private List<Post> postList= new ArrayList<>();
+
+    public postsAdapter() {
+
+    }
 
     @NonNull
     @Override
@@ -40,7 +45,6 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         holder.title.setText(post.getPost_title());
         holder.count.setText(post.getPost_details() + " songs");
 
-        // loading album cover using Glide library
         Glide.with(context).load(post.getPost_imageUrl()).into(holder.thumbnail);
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
@@ -69,10 +73,10 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_add_favourite:
-                    Toast.makeText(context, "Add to favourite", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Add to project", Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.action_play_next:
-                    Toast.makeText(context, "Play next", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "share", Toast.LENGTH_SHORT).show();
                     return true;
                 default:
             }

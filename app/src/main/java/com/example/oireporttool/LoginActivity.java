@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
         if (email !=null && password != null)
             try{
-                databaseHelper.getAccountExist(email,password);
+                databaseHelper.getAccountLogin(email,password);
                 func_showToast(this,"Welcome Back!");
                 startActivity(intent);
 
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         else{
-            func_showToast(this,"Please fill in required fields");
+            func_showToast(this,"Authentication Failed");
         }
 
 

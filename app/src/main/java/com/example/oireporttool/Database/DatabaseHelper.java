@@ -293,7 +293,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
         JSONObject currentRec = new JSONObject();
 
-        String result = "false";
+        String result = "zii";
 
         String selectQuery  = "SELECT  * FROM " + TABLE_ACCOUNTS + " WHERE " + KEY_USER_EMAIL +" = '"+ user_email +"'  AND " + KEY_USER_PASS + " = '"+ user_pass +"' ";
         SQLiteDatabase db   = this.getReadableDatabase();
@@ -510,7 +510,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
      **/
 
 
-    public void addPOst(String field_Data, String form_Name, String acc_user_id, String session_id, String record_id) {
+    public void addPost(String field_Data, String form_Name, String acc_user_id, String session_id, String record_id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
 

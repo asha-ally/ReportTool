@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="@dimen/album_cover_height"
@@ -58,7 +58,9 @@
             android:paddingLeft="@dimen/album_title_padding"
             android:paddingRight="@dimen/album_title_padding"
             android:textSize="@dimen/songs_count"
+            android:text="Date"
             />
+
         <ImageView
             android:id="@+id/overflow"
             android:layout_width="@dimen/ic_album_overflow_width"
@@ -68,8 +70,6 @@
             android:layout_marginTop="@dimen/ic_album_overflow_margin_top"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_dots" />
-
-
 
     </RelativeLayout>
 
