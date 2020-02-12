@@ -71,7 +71,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
     // POSTS Table
     public static final String TABLE_POSTS= "npd_posts";
-    private static final String KEY_POST_ACC_ID = "uuserId";
+    private static final String KEY_POST_ACC_ID = "user_id";
     private static final String KEY_POST_ID = "post_Id";
     private static final String KEY_POST_SESSION = "post_session";
     private static final String KEY_POST_IMAGE= "post_imageUrl";
@@ -572,15 +572,15 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     //title,description,date,imageUrl,audioUrl,user_id
 
         try {
-            contentValues.put(KEY_POST_ACC_ID,post.getString("userId"));
+            contentValues.put(KEY_POST_ACC_ID,post.getString("user_id"));
             contentValues.put(KEY_POST_TITLE, "none");
-            contentValues.put(KEY_POST_DETAIL, post.getString("description"));
-            contentValues.put(KEY_POST_DATE,post.getString("date"));
-            contentValues.put(KEY_POST_IMAGE,post.getString("imageUrl"));
-            contentValues.put(KEY_POST_PROJECT,post.getString("project"));
-            contentValues.put(KEY_POST_TAG,post.getString("tag"));
-            contentValues.put(KEY_POST_CATEGORY,post.getString("category"));
-            contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
+            contentValues.put(KEY_POST_DETAIL, post.getString("post_detail"));
+            contentValues.put(KEY_POST_DATE,post.getString("record_date"));
+            contentValues.put(KEY_POST_IMAGE,post.getString("post_imageUrl"));
+            contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
+            contentValues.put(KEY_POST_TAG,post.getString("post_tag"));
+            contentValues.put(KEY_POST_CATEGORY,post.getString("post_category"));
+            //contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
 
             sqLiteDatabase.insert(TABLE_POSTS, null, contentValues);
 

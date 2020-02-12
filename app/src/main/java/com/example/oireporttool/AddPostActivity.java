@@ -120,7 +120,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                 description= etDescription.getText().toString();
                 date = LocalDateTime.now().toString();
-                imageUrl = Url;
+                imageUrl = "/storage/emulated/0/Android/data/com.example.oireporttool/files/Pictures/JPEG_20200212_130109_8409903710734255598.jpg";
                 String post_projects= projects.getSelectedItem().toString();
                 String post_tag = tag.getSelectedItem().toString();
                 String post_category = category.getSelectedItem().toString();
@@ -132,13 +132,13 @@ public class AddPostActivity extends AppCompatActivity {
 
                 JSONObject post_b = new JSONObject();
                 try {
-                    post_b.put("userId", user_id);
-                    post_b.put("description", description);
-                    post_b.put("date", date);
-                    post_b.put("imageUrl", imageUrl);
-                    post_b.put("project",post_projects);
-                    post_b.put("tag",post_tag);
-                    post_b.put("category",post_category);
+                    post_b.put("user_id", user_id);
+                    post_b.put("post_detail", description);
+                    post_b.put("record_date", date);
+                    post_b.put("post_imageUrl", imageUrl);
+                    post_b.put("post_project",post_projects);
+                    post_b.put("post_tag",post_tag);
+                    post_b.put("post_category",post_category);
                     //post_b.put("audioUrl", audioUrl);
 
                     result = databaseHelper.addPost(post_b);
@@ -220,7 +220,7 @@ public class AddPostActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        Url = image.getAbsolutePath();
+        Url = image.getAbsolutePath();;
         Log.d("asha", Url);
         return image;
     }
