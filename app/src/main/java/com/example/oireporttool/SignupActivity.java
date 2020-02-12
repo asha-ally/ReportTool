@@ -37,7 +37,7 @@ public class SignupActivity extends AppCompatActivity {
 
         //Database Connection
         databaseHelper =new DatabaseHelper(this);
-        //Log.d("blabla", "wabebee");
+       // Log.d("blabla", "wabebee");
         //databaseHelper.customDbAction();
 
 
@@ -97,7 +97,7 @@ public class SignupActivity extends AppCompatActivity {
             user.put("lname",lname);
             user.put("number",number);
             user.put("email",email);
-            user.put("pwd",password);
+            user.put("password",password);
         } catch (JSONException e) {
             e.printStackTrace();
         }

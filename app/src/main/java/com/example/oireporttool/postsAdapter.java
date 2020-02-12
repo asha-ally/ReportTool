@@ -1,11 +1,17 @@
 package com.example.oireporttool;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -15,22 +21,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.oireporttool.Database.DatabaseHelper;
 import com.example.oireporttool.Database.Post;
 
 import java.util.ArrayList;
-import java.util.List;
+
+
 
 public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandler> {
     private Context context;
-    private List<Post> postList= new ArrayList<>();
+    private ArrayList<Post> postList; //= new ArrayList<>();
 
-    public postsAdapter() {
-
+    public postsAdapter(Context mContext, ArrayList<Post> postList) {
+        this.context = mContext;
+        this.postList= postList;
     }
 
-    @NonNull
+    /*@NonNull*/
     @Override
-    public postsAdapter.myViewHandler onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public postsAdapter.myViewHandler onCreateViewHolder( ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_row, parent, false);
 
@@ -40,12 +49,30 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
     }
 
     @Override
-    public void onBindViewHolder(@NonNull postsAdapter.myViewHandler holder, int position) {
+    public void onBindViewHolder( postsAdapter.myViewHandler holder, int position) {
         Post post = postList.get(position);
-        holder.title.setText(post.getPost_title());
-        holder.count.setText(post.getPost_details() + " songs");
 
-        Glide.with(context).load(post.getPost_imageUrl()).into(holder.thumbnail);
+        Log.d("post.post_imageUrl", post.post_imageUrl);
+
+
+
+            holder.thumbnail.setColorFilter(000000);
+
+            Glide.with(context).load(post.post_imageUrl).override(50,30).into(holder.thumbnail);
+
+//            post.post_imageUrl
+        //}
+
+        holder.title.setText(post.getPost_title());
+        holder.description.setText(post.getPost_details());
+        holder.date.setText(post.getRecord_date());
+
+
+
+//        if (post.post_imageUrl != null) {
+//            Glide.with(holder.itemView.getContext()).load(post.post_imageUrl).into(holder.thumbnail);
+//        }
+
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,23 +113,24 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
 
     @Override
     public int getItemCount() {
+        Log.d("waterlilies",String.valueOf(postList.size()));
 
         return postList.size();
     }
 
     public class myViewHandler extends RecyclerView.ViewHolder {
-        public TextView title, count;
+        public TextView title, description,date;
         public ImageView thumbnail, overflow;
         public myViewHandler(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
-            count = itemView.findViewById(R.id.description);
+            date=itemView.findViewById(R.id.date);
+            description = itemView.findViewById(R.id.description);
             thumbnail = itemView.findViewById(R.id.thumbnail);
             overflow = itemView.findViewById(R.id.overflow);
         }
     }
-    public postsAdapter(Context mContext, List<Post> postList) {
-        this.context = mContext;
-        this.postList= postList;
-    }
+
+
+
 }

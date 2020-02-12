@@ -57,7 +57,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
 
     private static final String CREATE_ACCOUNTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_ACCOUNTS + " ( " +
-            "  `" + KEY_USER_ACC_ID + "` integer  primary key autoincrement," +
+            "  `" + KEY_USER_ACC_ID + "` INTEGER  primary key autoincrement," +
             "  `" + KEY_USER_FNAME + "` TEXT," +
             "  `" + KEY_USER_LNAME + "` TEXT," +
             "  `" + KEY_USER_PHONE + "` TEXT," +
@@ -70,25 +70,32 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
 
     // POSTS Table
-    private static final String TABLE_POSTS= "npd_posts";
-    private static final String KEY_POST_ACC_ID = "user_id";
-    private static final String KEY_POST_ID = "post_id";
+    public static final String TABLE_POSTS= "npd_posts";
+    private static final String KEY_POST_ACC_ID = "uuserId";
+    private static final String KEY_POST_ID = "post_Id";
     private static final String KEY_POST_SESSION = "post_session";
     private static final String KEY_POST_IMAGE= "post_imageUrl";
     private static final String KEY_POST_DETAIL = "post_detail";
     private static final String KEY_POST_DATE = "record_date";
     private static final String KEY_POST_TITLE= "post_title";
     private static final String KEY_POST_AUDIO= "post_audioUrl";
+    private static final String KEY_POST_TAG="post_tag";
+    private static final String KEY_POST_CATEGORY="post_category";
+    private static final String KEY_POST_PROJECT="post_project";
+
 
     private static final String CREATE_POSTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_POSTS+ " ( " +
-            " `" + KEY_POST_ID + "` TEXT primary key autoincrement," +
+            " `" + KEY_POST_ID + "` INTEGER primary key autoincrement," +
             " `" + KEY_POST_ACC_ID + "` TEXT DEFAULT 0 NOT NULL," +
             " `" + KEY_POST_SESSION + "` TEXT," +
             " `" + KEY_POST_IMAGE+ "` TEXT," +
             " `" + KEY_POST_DETAIL + "` TEXT," +
             " `" + KEY_POST_DATE + "` TEXT," +
             " `" + KEY_POST_TITLE + "` TEXT  , " +
-            " `" + KEY_POST_AUDIO + "` TEXT " +
+            " `" + KEY_POST_AUDIO + "` TEXT ," +
+            " `" + KEY_POST_TAG+ "` TEXT ,"  +
+            " `" + KEY_POST_CATEGORY+ "` TEXT ,"  +
+            " `" + KEY_POST_PROJECT+ "` TEXT "  +
             ")";
 
 
@@ -109,8 +116,12 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     /* CUSTOM FUNCTION FOR RANDOM EVENTS*/
     public void customDbAction(){
         SQLiteDatabase db = this.getWritableDatabase();
-        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
         db.execSQL(CREATE_ACCOUNTS_TABLE);
+
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS + "; "); //IF EXISTS
+        db.execSQL(CREATE_POSTS_TABLE);
         Log.d("customDbAction", "created");
 
     }
@@ -194,7 +205,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
                 values.put(KEY_USER_LNAME, user_Data.getString("lname") );
                 values.put(KEY_USER_PHONE, user_Data.getString("number") );
                 values.put(KEY_USER_EMAIL, user_Data.getString("email") );
-                values.put(KEY_USER_PASS, user_Data.getString("pwd") );
+                values.put(KEY_USER_PASS, user_Data.getString("password") );
                 //values.put(KEY_USER_DP, user_Data.getString("profile_image") );
                 values.put(KEY_USER_DATE, action_date );
 
@@ -285,7 +296,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
 
 
-    public String getAccountLogin( String user_email, String user_pass) {
+    public JSONObject getAccountLogin( String user_email, String user_password) {
 
 
         ArrayList<HashMap<String, String>> userArray = new ArrayList<HashMap<String,String>>();
@@ -295,9 +306,11 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
         String result = "zii";
 
-        String selectQuery  = "SELECT  * FROM " + TABLE_ACCOUNTS + " WHERE " + KEY_USER_EMAIL +" = '"+ user_email +"'  AND " + KEY_USER_PASS + " = '"+ user_pass +"' ";
+        String selectQuery  = "SELECT  * FROM " + TABLE_ACCOUNTS + " WHERE " + KEY_USER_EMAIL +" = '"+ user_email +"'  AND " + KEY_USER_PASS + " = '"+ user_password +"' ";
         SQLiteDatabase db   = this.getReadableDatabase();
         Cursor cursor       = db.rawQuery(selectQuery, null);
+
+        //Log.d("login recs", String.valueOf(cursor.getCount()));
 
         if (cursor.getCount() != 0) {
             cursor.moveToFirst();
@@ -307,8 +320,11 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
                 currentRec.put(KEY_USER_FNAME, cursor.getString(cursor.getColumnIndex(KEY_USER_FNAME)));
                 currentRec.put(KEY_USER_LNAME, cursor.getString(cursor.getColumnIndex(KEY_USER_LNAME)));
                 currentRec.put(KEY_USER_PHONE, cursor.getString(cursor.getColumnIndex(KEY_USER_PHONE)));
+                currentRec.put(KEY_USER_EMAIL, cursor.getString(cursor.getColumnIndex(KEY_USER_EMAIL)));
 
-                result = currentRec.toString();
+
+                //result = currentRec.toString();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -318,7 +334,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
         }
         cursor.close();
 
-        return result;
+        return currentRec;
     }
 
 
@@ -544,18 +560,119 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
 
     }
-    public long addPost(Post post) {
-        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+    public long addPost(JSONObject post) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_POST_TITLE, post.getPost_title());
-        contentValues.put(KEY_POST_DETAIL, post.getPost_details());
-        contentValues.put(KEY_POST_IMAGE,post.getPost_imageUrl());
-        contentValues.put(KEY_POST_IMAGE,post.getPost_audioUrl());
+        User user;
+        Log.d("post_post", String.valueOf(post));
 
-        long insert = sqLiteDatabase.insert("notes", null, contentValues);
-        sqLiteDatabase.close();
+        long insert = 0;
+
+        // TODO: PASS EXTRA FIELDS TO THE LINE BELOW
+    //title,description,date,imageUrl,audioUrl,user_id
+
+        try {
+            contentValues.put(KEY_POST_ACC_ID,post.getString("userId"));
+            contentValues.put(KEY_POST_TITLE, "none");
+            contentValues.put(KEY_POST_DETAIL, post.getString("description"));
+            contentValues.put(KEY_POST_DATE,post.getString("date"));
+            contentValues.put(KEY_POST_IMAGE,post.getString("imageUrl"));
+            contentValues.put(KEY_POST_PROJECT,post.getString("project"));
+            contentValues.put(KEY_POST_TAG,post.getString("tag"));
+            contentValues.put(KEY_POST_CATEGORY,post.getString("category"));
+            contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
+
+            sqLiteDatabase.insert(TABLE_POSTS, null, contentValues);
+
+            //TODO: GET LastInsertID()
+            //sqLiteDatabase.execSQL("SELECT "+ KEY_POST_ID +" from "+ TABLE_POSTS +" order by "+ KEY_POST_ID +" DESC limit 1 " );
+
+
+            sqLiteDatabase.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return insert;
     }
+
+
+    // Getting All RECORDS FROM A TABLE
+
+    public JSONObject getRecords( String tbl_name) {
+
+        JSONArray recsAll = new JSONArray();
+        JSONObject recsCurrent = null;
+
+
+        String selectQuery  = "SELECT  * FROM " + tbl_name + "  ";
+        SQLiteDatabase db   = this.getReadableDatabase();
+        Cursor cursor       = db.rawQuery(selectQuery, null);
+
+        if (cursor.getCount() != 0) {
+
+            if (cursor.moveToFirst()) {
+
+                String value;
+                String key;
+                String[] propertyNames = cursor.getColumnNames();
+
+                do {
+                    recsCurrent = new JSONObject();
+                    int cols = propertyNames.length;
+                    for (int i = 0; i < cols; i++) {
+
+                        //Log.d("getColumnNames ", String.valueOf(i) + " " + cursor.getColumnName(i));
+
+                        try {
+                            key = cursor.getColumnName(i);
+                            value = cursor.getString(cursor.getColumnIndex(key));
+                            //Log.d("getRecord ", "Key: "+ key + " Value: " + value);
+                            recsCurrent.put(key, value);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    recsAll.put(recsCurrent);
+
+                } while (cursor.moveToNext());
+            }
+
+            //Log.d("getColumnNames ", String.valueOf(propertyNames.length) + " " + cursor.getColumnName(0));
+        }
+        cursor.close();
+
+        JSONObject recsFinal = new JSONObject();
+        if(recsAll.length() != 0) {
+            try {
+                recsFinal.put("records", recsAll);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return recsFinal;
+
+
+    }
+    public Post getPostById(int id) {
+        Post post= new Post();
+        String query = "SELECT* FROM notes WHERE id=?";
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery(query, new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst() == true) {
+            post.setPost_Id(cursor.getInt(cursor.getColumnIndex("id")));
+            post.setPost_details(cursor.getString(cursor.getColumnIndex("noteText")));
+        }
+        sqLiteDatabase.close();
+        return post;
+
+
+    }
+
 
 
 }

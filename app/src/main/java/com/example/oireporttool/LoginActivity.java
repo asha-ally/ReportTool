@@ -2,6 +2,7 @@ package com.example.oireporttool;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -17,6 +18,9 @@ import android.widget.Toast;
 
 import com.example.oireporttool.Database.DatabaseHelper;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static com.example.oireporttool.app.AppFunctions.func_showToast;
 
 
@@ -25,29 +29,71 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
+     JSONObject userAccount;
      EditText _emailText ;
      EditText _passwordText ;
      Button _loginButton;
      TextView _signupLink ;
      Context context;
      DatabaseHelper databaseHelper;
+     SharedPreferences sharedPref;
+     String  id;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-      _emailText = findViewById(R.id.input_email);
-      _passwordText = findViewById(R.id.input_password);
+      _emailText = findViewById(R.id.input_email);_emailText.setText("asha@email.com");
+      _passwordText = findViewById(R.id.input_password);_passwordText.setText("123456");
       _loginButton =findViewById(R.id.btn_login);
       _signupLink =findViewById(R.id.link_signup);
       context=this;
       databaseHelper=new DatabaseHelper(this);
 
+       //databaseHelper.customDbAction();
+
+        //sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+
+
+//      String prefs= sharedPref.getAll().toString();
+//      Log.d("data",prefs);
+
       _loginButton.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              login();
+              String email = _emailText.getText().toString();
+              String password = _passwordText.getText().toString();
+
+
+              userAccount = databaseHelper.getAccountLogin(email,password);
+              int llen = userAccount.length();
+
+
+
+              if(llen > 0) {
+                  SharedPreferences.Editor editor = sharedPref.edit();
+                  try {
+                      editor.putString("email", userAccount.getString("user_email"));
+                      editor.putString(id, String.valueOf(userAccount.getInt("user_id")));
+                      editor.putString("first_name", userAccount.getString("user_fname"));
+                      editor.putString("last_name", userAccount.getString("user_lname"));
+                      editor.commit();
+
+                      String prefs= sharedPref.getAll().toString();
+                      Log.d("data",prefs);
+
+
+                  } catch (JSONException e) {
+                      e.printStackTrace();
+                  }
+
+                  login();
+              } else {
+                  func_showToast(context, "Login Failed");
+              }
           }
       });
 
@@ -79,22 +125,16 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        if (email !=null && password != null)
-            try{
-                databaseHelper.getAccountLogin(email,password);
-                func_showToast(this,"Welcome Back!");
-                startActivity(intent);
 
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        else{
-            func_showToast(this,"Authentication Failed");
+
+
+        Intent intent1 = new Intent(getApplicationContext(),MainActivity.class);
+        try {
+            func_showToast(this,"Welcome Back! " + userAccount.getString("user_fname"));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        startActivity(intent1);
 
 
         new android.os.Handler().postDelayed(
@@ -162,4 +202,5 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
+
 }

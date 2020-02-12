@@ -15,4 +15,21 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="title_activity_add_post">AddPostActivity</string>
+    <string-array name="project_array">
+        <item>Projects</item>
+        <item>Dummy Project</item>
+    </string-array>
+
+    <string-array name="category_array">
+        <item>Update</item>
+        <item>Comment</item>
+        <item>Report</item>
+    </string-array>
+
+    <string-array name="tag_array">
+        <item>Work</item>
+        <item>Personal</item>
+    </string-array>
+
+
 </resources>
