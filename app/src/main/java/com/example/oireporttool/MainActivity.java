@@ -87,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         all_posts = db.getRecords(db.TABLE_POSTS);
 //        Log.d("all_posts",String.valueOf(all_posts));
-
-        try {
-            Log.d("TABLE_POSTS", String.valueOf(all_posts.getJSONArray("records")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            Log.d("TABLE_POSTS", String.valueOf(all_posts.getJSONArray("records")));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
 
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 post.post_details = json_data.getString("post_detail");
                 post.post_title = json_data.getString("post_title");
                 post.record_date = json_data.getString("record_date");
-                post.post_imageUrl =json_data.getString("post_imageUrl");
+                //post.post_imageUrl =json_data.getString("post_imageUrl");
 
                 postList.add(post);
             } catch (JSONException e) {
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             RecyclerView rvposts = findViewById(R.id.rvNotes);
-            rvposts.setHasFixedSize(true);
+            //rvposts.setHasFixedSize(true);
 
             //Log.d("postList", String.valueOf(postList));
 

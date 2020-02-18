@@ -98,6 +98,18 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             " `" + KEY_POST_PROJECT+ "` TEXT "  +
             ")";
 
+    // Organization Table
+    public static final String TABLE_ORG= "npd_organization";
+    private static final String KEY_ORG_ID = "organization_id";
+    private static final String KEY_ORG_NAME = "organization_name";
+
+
+    private static final String CREATE_ORG_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_POSTS+ " ( " +
+            " `" + KEY_ORG_ID + "` INTEGER primary key autoincrement," +
+            " `" + KEY_ORG_NAME + "` TEXT DEFAULT 0 NOT NULL" +
+            ")";
+
+
 
 
     public DatabaseHelper(Context context) {
@@ -110,6 +122,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(CREATE_ACCOUNTS_TABLE);
         database.execSQL(CREATE_POSTS_TABLE);
+        database.execSQL(CREATE_ORG_TABLE);
     }
 
 
@@ -563,7 +576,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     public long addPost(JSONObject post) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        User user;
+
         Log.d("post_post", String.valueOf(post));
 
         long insert = 0;
@@ -572,17 +585,18 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     //title,description,date,imageUrl,audioUrl,user_id
 
         try {
-            contentValues.put(KEY_POST_ACC_ID,post.getString("user_id"));
+            //contentValues.put(KEY_POST_ACC_ID,post.getString("user_id"));
             contentValues.put(KEY_POST_TITLE, "none");
-            contentValues.put(KEY_POST_DETAIL, post.getString("post_detail"));
-            contentValues.put(KEY_POST_DATE,post.getString("record_date"));
-            contentValues.put(KEY_POST_IMAGE,post.getString("post_imageUrl"));
+            contentValues.put(KEY_POST_DETAIL, post.getString("description"));
+            contentValues.put(KEY_POST_DATE,post.getString("date"));
+            //contentValues.put(KEY_POST_IMAGE,post.getString("imageUrl"));
             contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
             contentValues.put(KEY_POST_TAG,post.getString("post_tag"));
             contentValues.put(KEY_POST_CATEGORY,post.getString("post_category"));
             //contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
 
             sqLiteDatabase.insert(TABLE_POSTS, null, contentValues);
+            Log.d("contentValues",contentValues.toString());
 
             //TODO: GET LastInsertID()
             //sqLiteDatabase.execSQL("SELECT "+ KEY_POST_ID +" from "+ TABLE_POSTS +" order by "+ KEY_POST_ID +" DESC limit 1 " );
@@ -658,19 +672,43 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
 
     }
-    public Post getPostById(int id) {
+    public Post getRecordById(int id) {
         Post post= new Post();
-        String query = "SELECT* FROM notes WHERE id=?";
+//        getRecords(TABLE_POSTS)
+        String query = "SELECT* FROM npd_posts WHERE post_Id=?";
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery(query, new String[]{String.valueOf(id)});
         if (cursor.moveToFirst() == true) {
-            post.setPost_Id(cursor.getInt(cursor.getColumnIndex("id")));
-            post.setPost_details(cursor.getString(cursor.getColumnIndex("noteText")));
+            post.setPost_Id(cursor.getInt(cursor.getColumnIndex("post_id")));
+            post.setRecord_date(cursor.getString(cursor.getColumnIndex("record_date")));
+            post.setPost_details(cursor.getString(cursor.getColumnIndex("post_details")));
         }
         sqLiteDatabase.close();
         return post;
 
 
+    }
+    public void deletePost(int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        String tableName = "npd_posts";
+        String whereClause = "post_id=?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        sqLiteDatabase.delete(tableName, whereClause, whereArgs);
+        sqLiteDatabase.close();
+
+    }
+
+    public int updateNote(Post post) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("post_title", post.getPost_title());
+        contentValues.put("post_details", post.getPost_details());
+        String tableName = "notes";
+        String whereClause = "id=?";
+
+
+        return sqLiteDatabase.update(tableName, contentValues, whereClause,
+                new String[]{String.valueOf(post.getPost_Id())});
     }
 
 

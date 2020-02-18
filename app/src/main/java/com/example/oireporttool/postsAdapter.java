@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,13 +25,20 @@ import com.bumptech.glide.Glide;
 import com.example.oireporttool.Database.DatabaseHelper;
 import com.example.oireporttool.Database.Post;
 
+import java.io.Externalizable;
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import static com.example.oireporttool.app.AppFunctions.func_formatDateFromString;
+import static java.lang.System.currentTimeMillis;
 
 
 public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandler> {
     private Context context;
     private ArrayList<Post> postList; //= new ArrayList<>();
+    public static final String SHARE_DESCRIPTION = "Look at this new post";
+    public static final String HASHTAG_CANDYCODED = " #Nataka";
 
     public postsAdapter(Context mContext, ArrayList<Post> postList) {
         this.context = mContext;
@@ -43,6 +51,8 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_row, parent, false);
 
+
+
         return new myViewHandler(itemView);
 
 
@@ -52,22 +62,10 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
     public void onBindViewHolder( postsAdapter.myViewHandler holder, int position) {
         Post post = postList.get(position);
 
-        Log.d("post.post_imageUrl", post.post_imageUrl);
-
-
-
-            holder.thumbnail.setColorFilter(000000);
-
-            Glide.with(context).load(post.post_imageUrl).override(50,30).into(holder.thumbnail);
-
-//            post.post_imageUrl
-        //}
-
+        //Log.d("post.post_imageUrl", post.post_imageUrl);
         holder.title.setText(post.getPost_title());
         holder.description.setText(post.getPost_details());
         holder.date.setText(post.getRecord_date());
-
-
 
 //        if (post.post_imageUrl != null) {
 //            Glide.with(holder.itemView.getContext()).load(post.post_imageUrl).into(holder.thumbnail);
@@ -99,11 +97,12 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
+                case R.id.action_add_project:
                     Toast.makeText(context, "Add to project", Toast.LENGTH_SHORT).show();
                     return true;
-                case R.id.action_play_next:
+                case R.id.action_share:
                     Toast.makeText(context, "share", Toast.LENGTH_SHORT).show();
+                    createShareIntent();
                     return true;
                 default:
             }
@@ -118,19 +117,45 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         return postList.size();
     }
 
-    public class myViewHandler extends RecyclerView.ViewHolder {
+
+    public class myViewHandler extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title, description,date;
         public ImageView thumbnail, overflow;
         public myViewHandler(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
-            date=itemView.findViewById(R.id.date);
+            date = itemView.findViewById(R.id.date);
             description = itemView.findViewById(R.id.description);
             thumbnail = itemView.findViewById(R.id.thumbnail);
             overflow = itemView.findViewById(R.id.overflow);
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            Log.d("position",String.valueOf(position));
+            Post clickedPost = postList.get(position);
+            Intent intent = new Intent(v.getContext(),ViewPost.class);
+            intent.putExtra("Post", String.valueOf(clickedPost));
+            v.getContext().startActivity(intent);
+
+
+
         }
     }
 
+    private void  createShareIntent(){
+        Intent shareIntent= new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+        String shareString= SHARE_DESCRIPTION + HASHTAG_CANDYCODED;
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareString);
+        context.startActivity(shareIntent);
+
+
+    }
 
 }

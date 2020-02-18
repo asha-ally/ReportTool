@@ -61,9 +61,9 @@ public class Post {
         return record_date.toString();
     }
 
-//    public void setRecord_date(Date record_date) {
-//        this.record_date = record_date;
-//    }
+    public void setRecord_date(String record_date) {
+        this.record_date = record_date.toString();
+    }
 
     public String getUserId() {
         return userId;

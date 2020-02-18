@@ -1,5 +1,6 @@
 package com.example.oireporttool;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import com.example.oireporttool.Database.DatabaseHelper;
 import com.example.oireporttool.Database.Post;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -31,9 +33,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
+
+import static com.example.oireporttool.app.AppFunctions.func_formatDateFromString;
 
 public class AddPostActivity extends AppCompatActivity {
     EditText etTitle;
@@ -120,7 +126,11 @@ public class AddPostActivity extends AppCompatActivity {
 
                 description= etDescription.getText().toString();
                 date = LocalDateTime.now().toString();
-                imageUrl = "/storage/emulated/0/Android/data/com.example.oireporttool/files/Pictures/JPEG_20200212_130109_8409903710734255598.jpg";
+                Timestamp action_time = new Timestamp(System.currentTimeMillis());
+                String action_time_id = String.valueOf(action_time.getTime());
+                String action_date = func_formatDateFromString(action_time_id);
+
+//                imageUrl = Url;
                 String post_projects= projects.getSelectedItem().toString();
                 String post_tag = tag.getSelectedItem().toString();
                 String post_category = category.getSelectedItem().toString();
@@ -132,10 +142,10 @@ public class AddPostActivity extends AppCompatActivity {
 
                 JSONObject post_b = new JSONObject();
                 try {
+                    //post_b.put("imageUrl", Url);
                     post_b.put("user_id", user_id);
-                    post_b.put("post_detail", description);
-                    post_b.put("record_date", date);
-                    post_b.put("post_imageUrl", imageUrl);
+                    post_b.put("description", description);
+                    post_b.put("date", date);
                     post_b.put("post_project",post_projects);
                     post_b.put("post_tag",post_tag);
                     post_b.put("post_category",post_category);
@@ -172,7 +182,7 @@ public class AddPostActivity extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.oireporttool.fileprovider",
+                        "com.example.oireporttool.provider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
@@ -197,8 +207,7 @@ public class AddPostActivity extends AppCompatActivity {
                 String FilePath = data.getData().getPath();
                 textFile.setText(FilePath);
                 Log.d("rada", FilePath);
-//                Intent intent= new Intent(getApplicationContext(),AddPostActivity.class);
-//                startActivity(intent);
+
 
         }
 
@@ -220,13 +229,14 @@ public class AddPostActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        Url = image.getAbsolutePath();;
+        Url = "/storage/emulated/0/Android/data/com.example.oireporttool/files/Pictures/JPEG_20200212_182633_1409765552860922955.jpg" ;
+                //image.getAbsolutePath();
         Log.d("asha", Url);
         return image;
+//    }
+
+
     }
-
-
-
 
 
 }
