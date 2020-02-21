@@ -1,7 +1,9 @@
 package com.example.oireporttool;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,12 +14,20 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.oireporttool.Database.DatabaseHelper;
 import com.example.oireporttool.Database.Post;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
 public class ViewPost extends AppCompatActivity {
     TextView tvDescription,tvDate;
     Button btnEdit;
     Button btnDelete;
     DatabaseHelper databaseHelper;
     Context context;
+    Bundle ibundle;
+    String bundleData;
+
+
     int postId;
 
 
@@ -29,6 +39,9 @@ public class ViewPost extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+
+
         tvDescription= findViewById(R.id.tvDescription);
         tvDate=findViewById(R.id.tvDate);
         btnDelete=findViewById(R.id.btnDelete);
@@ -36,6 +49,12 @@ public class ViewPost extends AppCompatActivity {
         getPostId();
         context=this;
         databaseHelper=new DatabaseHelper(context);
+        ibundle = getIntent().getExtras();
+        bundleData = (String) ibundle.get("PostData");
+//        JSONObject data = ibundle.
+        Log.d("bundleData", bundleData);
+
+
 
         displayPost();
 
@@ -44,6 +63,23 @@ public class ViewPost extends AppCompatActivity {
             public void onClick(View v) {
                 databaseHelper.deletePost(postId);
                 finish();
+            }
+        });
+
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Post clickedPost = new Post();
+                JSONObject asha = clickedPost.getPostAll();
+                String thePostData = String.valueOf(asha);
+                Log.d("postList asha", String.valueOf(asha));
+                Intent intent = new Intent(v.getContext(),PostActivity.class);
+                intent.putExtra("PostActivity", String.valueOf(clickedPost));
+                intent.putExtra("PostData", thePostData);
+                startActivity(intent);
+
+
             }
         });
 
@@ -58,8 +94,14 @@ public class ViewPost extends AppCompatActivity {
 
     }
     public void displayPost(){
-        Post post= databaseHelper.getRecordById(postId);
-//        tvDate.setText(post.getRecord_date());
-        tvDescription.setText(post.getPost_details());
+        try {
+            JSONObject jsnobject = new JSONObject(bundleData);
+            Log.d("ka value", jsnobject.getString("post_details"));
+            tvDescription.setText( jsnobject.getString("post_details"));
+            tvDate.setText(jsnobject.getString("record_date"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 }
 }

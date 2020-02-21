@@ -3,6 +3,7 @@ package com.example.oireporttool;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.icu.text.LocaleDisplayNames;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -25,20 +28,25 @@ import com.bumptech.glide.Glide;
 import com.example.oireporttool.Database.DatabaseHelper;
 import com.example.oireporttool.Database.Post;
 
+import org.json.JSONObject;
+
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.oireporttool.app.AppFunctions.func_formatDateFromString;
 import static java.lang.System.currentTimeMillis;
 
 
-public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandler> {
+public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandler> implements Filterable {
     private Context context;
     private ArrayList<Post> postList; //= new ArrayList<>();
     public static final String SHARE_DESCRIPTION = "Look at this new post";
     public static final String HASHTAG_CANDYCODED = " #Nataka";
+    private List<Post> animalListFiltered;
+
 
     public postsAdapter(Context mContext, ArrayList<Post> postList) {
         this.context = mContext;
@@ -89,6 +97,11 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         popup.show();
     }
 
+    @Override
+    public Filter getFilter() {
+            return null;
+    }
+
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
         public MyMenuItemClickListener() {
@@ -137,8 +150,17 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
             int position = getAdapterPosition();
             Log.d("position",String.valueOf(position));
             Post clickedPost = postList.get(position);
+
+            JSONObject asha = clickedPost.getPostAll();
+            String thePostData = String.valueOf(asha);
+
+            Log.d("postList", String.valueOf(clickedPost));
+            Log.d("postList asha", String.valueOf(asha));
+
             Intent intent = new Intent(v.getContext(),ViewPost.class);
-            intent.putExtra("Post", String.valueOf(clickedPost));
+            intent.putExtra("PostActivity", String.valueOf(clickedPost));
+            intent.putExtra("PostData", thePostData);
+
             v.getContext().startActivity(intent);
 
 

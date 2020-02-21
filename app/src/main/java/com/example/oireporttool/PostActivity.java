@@ -41,7 +41,7 @@ import java.util.UUID;
 
 import static com.example.oireporttool.app.AppFunctions.func_formatDateFromString;
 
-public class AddPostActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity {
     EditText etTitle;
     EditText etDescription;
     Button btnSave;
@@ -56,6 +56,10 @@ public class AddPostActivity extends AppCompatActivity {
     private ImageView imgView;
     private String Url;
     private String user_id;
+    int postId;
+    Bundle ibundle;
+    String bundleData;
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     TextView textFile;
 
@@ -93,7 +97,11 @@ public class AddPostActivity extends AppCompatActivity {
         tag= findViewById(R.id.tag_array);
         category= findViewById(R.id.category_array);
 
+        getPostId();
+
         context=this;
+        displayPost();
+
 
         btnAddphoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +145,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                 long result = 0;
 
-                //Post post =new Post(title,description,date,imageUrl,audioUrl,user_id);
+                //PostActivity post =new PostActivity(title,description,date,imageUrl,audioUrl,user_id);
                 //databaseHelper.addPost(post);
 
                 JSONObject post_b = new JSONObject();
@@ -237,6 +245,28 @@ public class AddPostActivity extends AppCompatActivity {
 
 
     }
+
+    public void getPostId(){
+        Bundle bundle=getIntent().getExtras();
+        if(bundle!=null){
+            postId=bundle.getInt("KEY_POST_ID",0);
+        }
+    }
+
+    public void displayPost(){
+        Post post= new Post();
+        JSONObject jsnobject=post.getPostAll();
+        try {
+            etDescription.setText( jsnobject.getString("post_details"));
+            Log.d("edited", jsnobject.getString("post_details"));
+
+//            etTitle.setText(jsnobject.getString("record_date"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

@@ -23,14 +23,14 @@
         <activity android:name=".VoiceRecordActivity"/>
 
         <activity
-            android:name=".AddPostActivity"
+            android:name=".PostActivity"
             android:label="@string/title_activity_add_post"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
             android:name=".ViewPost"
-            android:label="@string/title_activity_add_post"
+            android:label="@string/view_post"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>

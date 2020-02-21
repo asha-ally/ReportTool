@@ -5,11 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.example.oireporttool.Database.DatabaseHelper;
-import com.example.oireporttool.Database.Post;
 
 import android.util.Log;
 import android.view.MenuItem;
@@ -31,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +37,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.example.oireporttool.app.AppFunctions.func_showToast;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -73,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), AddPostActivity.class);
+                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
                 startActivity(intent);
             }
         });
@@ -121,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //JSONObject all_posts = db.getRecords(db.TABLE_POSTS);
         Iterator x = all_posts.keys();
-        List<Post> data =new ArrayList<>();
+        List<com.example.oireporttool.Database.Post> data =new ArrayList<>();
         JSONArray jsonArray = new JSONArray();
 
         try {
@@ -134,10 +129,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-        ArrayList < Post > postList= new ArrayList < Post > ();
+        ArrayList <com.example.oireporttool.Database.Post> postList= new ArrayList <com.example.oireporttool.Database.Post> ();
         for (int i = 0; i < jsonArray.length(); i++)
         {
-            Post post = new Post();
+            com.example.oireporttool.Database.Post post = new com.example.oireporttool.Database.Post();
             JSONObject json_data = null;
             try {
                 json_data = jsonArray.getJSONObject(i);

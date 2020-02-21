@@ -1,5 +1,8 @@
 package com.example.oireporttool.Database;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 
 public class Post {
@@ -111,5 +114,24 @@ public class Post {
 
     public void setPost_project(String post_project) {
         this.post_project = post_project;
+    }
+
+
+    public JSONObject getPostAll(){
+
+        JSONObject postData = new JSONObject();
+
+        try {
+            postData.put("post_Id", this.post_Id);
+            postData.put("post_title", this.post_title);
+            postData.put("post_details", this.post_details);
+            postData.put("record_date", this.record_date);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return postData;
     }
 }

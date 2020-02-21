@@ -74,11 +74,9 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     private static final String KEY_POST_ACC_ID = "user_id";
     private static final String KEY_POST_ID = "post_Id";
     private static final String KEY_POST_SESSION = "post_session";
-    private static final String KEY_POST_IMAGE= "post_imageUrl";
     private static final String KEY_POST_DETAIL = "post_detail";
     private static final String KEY_POST_DATE = "record_date";
     private static final String KEY_POST_TITLE= "post_title";
-    private static final String KEY_POST_AUDIO= "post_audioUrl";
     private static final String KEY_POST_TAG="post_tag";
     private static final String KEY_POST_CATEGORY="post_category";
     private static final String KEY_POST_PROJECT="post_project";
@@ -88,15 +86,28 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             " `" + KEY_POST_ID + "` INTEGER primary key autoincrement," +
             " `" + KEY_POST_ACC_ID + "` TEXT DEFAULT 0 NOT NULL," +
             " `" + KEY_POST_SESSION + "` TEXT," +
-            " `" + KEY_POST_IMAGE+ "` TEXT," +
             " `" + KEY_POST_DETAIL + "` TEXT," +
             " `" + KEY_POST_DATE + "` TEXT," +
             " `" + KEY_POST_TITLE + "` TEXT  , " +
-            " `" + KEY_POST_AUDIO + "` TEXT ," +
             " `" + KEY_POST_TAG+ "` TEXT ,"  +
             " `" + KEY_POST_CATEGORY+ "` TEXT ,"  +
             " `" + KEY_POST_PROJECT+ "` TEXT "  +
             ")";
+
+    //Resources Table
+    public static final String TABLE_RESOURCES= "npd_resources";
+    private static final String KEY_RES_ID = "post_Id";
+    private static final String KEY_RES_IMAGE= "post_imageUrl";
+    private static final String KEY_RES_AUDIO= "post_audioUrl";
+
+
+
+    private static final String CREATE_RESOURCES_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_RESOURCES+ " ( " +
+            " `" + KEY_RES_ID + "` INTEGER primary key autoincrement," +
+            " `" + KEY_RES_IMAGE+ "` TEXT," +
+            " `" + KEY_RES_AUDIO + "` TEXT " +
+            ")";
+
 
     // Organization Table
     public static final String TABLE_ORG= "npd_organization";
@@ -104,11 +115,25 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     private static final String KEY_ORG_NAME = "organization_name";
 
 
-    private static final String CREATE_ORG_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_POSTS+ " ( " +
+    private static final String CREATE_ORG_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_ORG+ " ( " +
             " `" + KEY_ORG_ID + "` INTEGER primary key autoincrement," +
             " `" + KEY_ORG_NAME + "` TEXT DEFAULT 0 NOT NULL" +
             ")";
 
+    // Project Table
+    public static final String TABLE_PROJECTS= "npd_project";
+    private static final String KEY_PROJECT_ID = "project_id";
+    private static final String KEY_PROJECT_NAME = "project_name";
+    private static final String KEY_PROJECT_ORG_ID = "organization_id";
+    private static final String KEY_PROJECT_POST_ID = "post_id";
+
+
+    private static final String CREATE_PROJECTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_PROJECTS+ " ( " +
+            " `" + KEY_PROJECT_ID + "` INTEGER primary key autoincrement," +
+            " `" + KEY_PROJECT_NAME + "` TEXT DEFAULT 0 NOT NULL," +
+            " `" + KEY_PROJECT_ORG_ID + "` INTEGER," +
+            " `" + KEY_PROJECT_POST_ID+ "` INTEGER" +
+            ")";
 
 
 
@@ -123,18 +148,22 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
         database.execSQL(CREATE_ACCOUNTS_TABLE);
         database.execSQL(CREATE_POSTS_TABLE);
         database.execSQL(CREATE_ORG_TABLE);
+        database.execSQL(CREATE_RESOURCES_TABLE);
+        database.execSQL(CREATE_PROJECTS_TABLE);
     }
 
 
     /* CUSTOM FUNCTION FOR RANDOM EVENTS*/
     public void customDbAction(){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
-        db.execSQL(CREATE_ACCOUNTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORG);
+        db.execSQL(CREATE_ORG_TABLE);
 
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS + "; "); //IF EXISTS
-        db.execSQL(CREATE_POSTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESOURCES + "; "); //IF EXISTS
+        db.execSQL(CREATE_RESOURCES_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS + "; "); //IF EXISTS
+        db.execSQL(CREATE_PROJECTS_TABLE);
         Log.d("customDbAction", "created");
 
     }
