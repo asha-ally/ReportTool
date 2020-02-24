@@ -17,40 +17,28 @@ import com.example.oireporttool.Database.DatabaseHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+public class OrganizationLoginActivity extends AppCompatActivity {
+    private static final String TAG = "OrganizationActivity";
 
-public class SignupActivity extends AppCompatActivity {
-    private static final String TAG = "SignupActivity";
-
-    DatabaseHelper databaseHelper;
-    EditText _fname;
+    EditText _oname;
     EditText _emailText;
     EditText _passwordText;
     Button _signupButton;
     TextView _loginLink;
-    EditText _lname;
-    EditText _number;
-    TextView _linkorglogin;
+    DatabaseHelper databaseHelper;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_organization_login);
 
-        //Database Connection
         databaseHelper =new DatabaseHelper(this);
-       // Log.d("blabla", "wabebee");
-        //databaseHelper.customDbAction();
 
-
-        _fname =findViewById(R.id.input_fname);
-        _lname=findViewById(R.id.input_lname);
-        _number=findViewById(R.id.input_number);
+        _oname =findViewById(R.id.input_oname);
         _emailText =findViewById(R.id.input_email1);
         _passwordText =findViewById(R.id.input_password1);
         _signupButton =findViewById(R.id.btn_signup);
-         _loginLink =findViewById(R.id.link_login);
-         _linkorglogin= findViewById(R.id.link_org_login);
-
+        _loginLink =findViewById(R.id.link_login);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +46,6 @@ public class SignupActivity extends AppCompatActivity {
                 signup();
             }
         });
-
         _loginLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,20 +53,12 @@ public class SignupActivity extends AppCompatActivity {
                 finish();
             }
         });
-        _linkorglogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-             Intent intent= new Intent(getBaseContext(),OrganizationLoginActivity.class);
-             startActivity(intent);
-            }
-        });
+
 
 
     }
-
-    //signup logic
-
-    public void signup() {
+    public void signup()
+    {
         Log.d(TAG, "Signup");
 
         if (!validate()) {
@@ -89,14 +68,12 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
+        final ProgressDialog progressDialog = new ProgressDialog(OrganizationLoginActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        String fname = _fname.getText().toString();
-        String lname = _lname.getText().toString();
-        String number = _number.getText().toString();
+        String fname = _oname.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
@@ -105,17 +82,15 @@ public class SignupActivity extends AppCompatActivity {
         JSONObject user =new JSONObject();
         try {
             user.put("fname",fname);
-            user.put("lname",lname);
-            user.put("number",number);
             user.put("email",email);
             user.put("password",password);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //Log.d("form_data", String.valueOf(user));
+      Log.d("form_data", String.valueOf(user));
 
-        databaseHelper.addAccountNew(user);
+        databaseHelper.addAccount(user);
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -128,8 +103,6 @@ public class SignupActivity extends AppCompatActivity {
                     }
                 }, 3000);
     }
-
-
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
@@ -146,29 +119,15 @@ public class SignupActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String fname = _fname.getText().toString();
-        String lname =_lname.getText().toString();
-        String number=_number.getText().toString();
+        String fname = _oname.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         if (fname.isEmpty() || fname.length() < 3) {
-            _fname.setError("at least 3 characters");
+            _oname.setError("at least 3 characters");
             valid = false;
         } else {
-            _fname.setError(null);
-        }
-        if (lname.isEmpty() || lname.length() < 3) {
-            _lname.setError("at least 3 characters");
-            valid = false;
-        } else {
-            _lname.setError(null);
-        }
-        if (number.isEmpty() || number.length() < 10) {
-            _number.setError("at least 10 characters");
-            valid = false;
-        } else {
-            _number.setError(null);
+            _oname.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -188,7 +147,6 @@ public class SignupActivity extends AppCompatActivity {
         return valid;
     }
 
-
     public  void display_MainActivity(){
 
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -196,4 +154,7 @@ public class SignupActivity extends AppCompatActivity {
         finish();
 
     }
+
+
+
 }

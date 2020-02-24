@@ -113,11 +113,15 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     public static final String TABLE_ORG= "npd_organization";
     private static final String KEY_ORG_ID = "organization_id";
     private static final String KEY_ORG_NAME = "organization_name";
+    private static final String KEY_ORG_EMAIL = "organization_email";
+    private static final String KEY_ORG_PASSWORD = "organization_password";
 
 
     private static final String CREATE_ORG_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_ORG+ " ( " +
             " `" + KEY_ORG_ID + "` INTEGER primary key autoincrement," +
-            " `" + KEY_ORG_NAME + "` TEXT DEFAULT 0 NOT NULL" +
+            " `" + KEY_ORG_NAME + "` TEXT DEFAULT 0 NOT NULL," +
+            " `" + KEY_ORG_EMAIL + "` TEXT DEFAULT 0 NOT NULL," +
+            " `" + KEY_ORG_PASSWORD + "` TEXT DEFAULT 0 NOT NULL" +
             ")";
 
     // Project Table
@@ -260,6 +264,41 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        //}
+
+    }
+    public void addAccount(JSONObject user_Data) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        String field_Data = null;
+        String user_status = null;
+
+
+
+        //if (field_Data != null || user_status.equals("active")) {
+
+        Timestamp action_time = new Timestamp(System.currentTimeMillis());
+        String action_time_id = String.valueOf(action_time.getTime());
+        String action_date = func_formatDateFromString(action_time_id);
+
+        try {
+            Log.d("organization_Data", String.valueOf(user_Data));
+            //values.put(KEY_USER_ACC_ID, user_Data.getString("id") ); // Account ID
+            values.put(KEY_ORG_NAME, user_Data.getString("oname") );
+            values.put(KEY_ORG_EMAIL, user_Data.getString("email") );
+            values.put(KEY_ORG_PASSWORD, user_Data.getString("password") );
+
+
+            db.insert(TABLE_ORG, null, values);
+            db.close();
+
+            //Log.d("accountNew", "Malizad");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //}
 
     }
@@ -639,6 +678,46 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
         return insert;
     }
+
+    public long addPosttoProject(JSONObject post) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        Log.d("post_post", String.valueOf(post));
+
+        long insert = 0;
+
+        // TODO: PASS EXTRA FIELDS TO THE LINE BELOW
+        //title,description,date,imageUrl,audioUrl,user_id
+
+        try {
+            //contentValues.put(KEY_POST_ACC_ID,post.getString("user_id"));
+            contentValues.put(KEY_POST_TITLE, "none");
+            contentValues.put(KEY_POST_DETAIL, post.getString("description"));
+            contentValues.put(KEY_POST_DATE,post.getString("date"));
+            //contentValues.put(KEY_POST_IMAGE,post.getString("imageUrl"));
+            contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
+            contentValues.put(KEY_POST_TAG,post.getString("post_tag"));
+            contentValues.put(KEY_POST_CATEGORY,post.getString("post_category"));
+            //contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
+
+            sqLiteDatabase.insert(TABLE_POSTS, null, contentValues);
+            Log.d("contentValues",contentValues.toString());
+
+            //TODO: GET LastInsertID()
+            //sqLiteDatabase.execSQL("SELECT "+ KEY_POST_ID +" from "+ TABLE_POSTS +" order by "+ KEY_POST_ID +" DESC limit 1 " );
+
+
+            sqLiteDatabase.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return insert;
+    }
+
+
 
 
     // Getting All RECORDS FROM A TABLE

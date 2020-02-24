@@ -2,11 +2,7 @@ package com.example.oireporttool;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.icu.text.LocaleDisplayNames;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.ContactsContract;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -176,7 +172,6 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         String shareString= SHARE_DESCRIPTION + HASHTAG_CANDYCODED;
         shareIntent.putExtra(Intent.EXTRA_TEXT,shareString);
         context.startActivity(shareIntent);
-
 
     }
 
