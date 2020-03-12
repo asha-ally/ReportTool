@@ -59,13 +59,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/description"
-            android:layout_marginLeft="280dp"
-            android:layout_marginTop="-6dp"
+            android:gravity="right"
+            android:layout_marginTop="3dp"
             android:layout_toRightOf="@id/thumbnail"
+            android:layout_alignParentEnd="true"
             android:text="textView"
-            tools:layout_editor_absoluteX="96dp"
-            tools:layout_editor_absoluteY="70dp" />
-
+            android:layout_alignParentRight="true" />
+            <!--
+            android:layout_marginLeft="200dp"
+             tools:layout_editor_absoluteX="96dp"
+            tools:layout_editor_absoluteY="70dp"
+            -->
         <ImageView
             android:id="@+id/overflow"
             android:layout_width="@dimen/ic_album_overflow_width"

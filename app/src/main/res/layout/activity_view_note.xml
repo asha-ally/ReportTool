@@ -19,11 +19,14 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
-    <androidx.core.widget.NestedScrollView
+<!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+<!--    </androidx.core.widget.NestedScrollView>-->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    </androidx.core.widget.NestedScrollView>
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -116,12 +119,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="7dp"
-                    android:text="Longitude : 47.783624"/>
+                    android:id="@+id/longitude"
+                    android:text=" -1.2838046 "
+                    android:clickable="true"
+
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Latitude : -1.4738383"/>
+                    android:id="@+id/latitude"
+                    android:text="36.8043313"
+
+                    />
 
             </LinearLayout>
         </LinearLayout>
@@ -177,7 +187,15 @@
                 android:textSize="16dp"
                 android:drawableLeft="@drawable/ic_delete_black_24dp"/>
         </LinearLayout>
+        <fragment
+            android:id="@+id/maps"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="330dp" />
+
     </LinearLayout>
+    </ScrollView>
+
 
     <!--<android.support.design.widget.FloatingActionButton-->
     <!--android:id="@+id/fab"-->
@@ -185,6 +203,6 @@
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_gravity="bottom|end"-->
     <!--android:layout_margin="@dimen/fab_margin"-->
-    app:srcCompat="@android:drawable/ic_dialog_email" />
+<!--    app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

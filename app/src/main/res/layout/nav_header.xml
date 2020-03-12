@@ -7,17 +7,22 @@
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nav_imageView"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/colorPrimary"/>
     <TextView
+        android:id="@+id/nav_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:hint="Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
     <TextView
+        android:id="@+id/navi_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"

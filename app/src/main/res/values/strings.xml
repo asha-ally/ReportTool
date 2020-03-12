@@ -16,6 +16,9 @@
     <string name="menu_send">Send</string>
     <string name="title_activity_add_post">PostActivity</string>
     <string name="view_post">ViewPost</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="take_photo">Take Photo</string>
     <string-array name="project_array">
         <item>Projects</item>
         <item>Dummy Project</item>

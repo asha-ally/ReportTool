@@ -37,7 +37,6 @@ public class LoginActivity extends AppCompatActivity {
      Context context;
      DatabaseHelper databaseHelper;
      SharedPreferences sharedPref;
-     String  id;
 
 
     @Override
@@ -77,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                   SharedPreferences.Editor editor = sharedPref.edit();
                   try {
                       editor.putString("email", userAccount.getString("user_email"));
-                      editor.putString(id, String.valueOf(userAccount.getInt("user_id")));
+                      editor.putString("id", String.valueOf(userAccount.getInt("user_id")));
                       editor.putString("first_name", userAccount.getString("user_fname"));
                       editor.putString("last_name", userAccount.getString("user_lname"));
                       editor.commit();

@@ -80,6 +80,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     private static final String KEY_POST_TAG="post_tag";
     private static final String KEY_POST_CATEGORY="post_category";
     private static final String KEY_POST_PROJECT="post_project";
+    private static final String KEY_POST_COORDINATES="post_coordinates";
 
 
     private static final String CREATE_POSTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_POSTS+ " ( " +
@@ -91,7 +92,8 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             " `" + KEY_POST_TITLE + "` TEXT  , " +
             " `" + KEY_POST_TAG+ "` TEXT ,"  +
             " `" + KEY_POST_CATEGORY+ "` TEXT ,"  +
-            " `" + KEY_POST_PROJECT+ "` TEXT "  +
+            " `" + KEY_POST_PROJECT+ "` TEXT ,"  +
+            " `" + KEY_POST_COORDINATES+ "` TEXT "  +
             ")";
 
     //Resources Table
@@ -99,7 +101,6 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     private static final String KEY_RES_ID = "post_Id";
     private static final String KEY_RES_IMAGE= "post_imageUrl";
     private static final String KEY_RES_AUDIO= "post_audioUrl";
-
 
 
     private static final String CREATE_RESOURCES_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_RESOURCES+ " ( " +
@@ -119,9 +120,9 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
     private static final String CREATE_ORG_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_ORG+ " ( " +
             " `" + KEY_ORG_ID + "` INTEGER primary key autoincrement," +
-            " `" + KEY_ORG_NAME + "` TEXT DEFAULT 0 NOT NULL," +
-            " `" + KEY_ORG_EMAIL + "` TEXT DEFAULT 0 NOT NULL," +
-            " `" + KEY_ORG_PASSWORD + "` TEXT DEFAULT 0 NOT NULL" +
+            " `" + KEY_ORG_NAME + "` TEXT ," +
+            " `" + KEY_ORG_EMAIL + "` TEXT ," +
+            " `" + KEY_ORG_PASSWORD + "` TEXT " +
             ")";
 
     // Project Table
@@ -160,15 +161,17 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     /* CUSTOM FUNCTION FOR RANDOM EVENTS*/
     public void customDbAction(){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORG);
-        db.execSQL(CREATE_ORG_TABLE);
-
-
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESOURCES + "; "); //IF EXISTS
-        db.execSQL(CREATE_RESOURCES_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS + "; "); //IF EXISTS
-        db.execSQL(CREATE_PROJECTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS+ "; "); //IF EXISTS
+        db.execSQL(CREATE_POSTS_TABLE);
         Log.d("customDbAction", "created");
+       // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORG);
+//        db.execSQL(CREATE_ORG_TABLE);
+//
+//
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESOURCES + "; "); //IF EXISTS
+//        db.execSQL(CREATE_RESOURCES_TABLE);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS + "; "); //IF EXISTS
+//        db.execSQL(CREATE_PROJECTS_TABLE);
 
     }
 
@@ -646,6 +649,9 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
 
         Log.d("post_post", String.valueOf(post));
+        Timestamp action_time = new Timestamp(System.currentTimeMillis());
+        String action_time_id = String.valueOf(action_time.getTime());
+        String action_date = func_formatDateFromString(action_time_id);
 
         long insert = 0;
 
@@ -653,14 +659,15 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     //title,description,date,imageUrl,audioUrl,user_id
 
         try {
-            //contentValues.put(KEY_POST_ACC_ID,post.getString("user_id"));
+            contentValues.put(KEY_POST_ACC_ID,post.getString("user_id"));
             contentValues.put(KEY_POST_TITLE, "none");
             contentValues.put(KEY_POST_DETAIL, post.getString("description"));
-            contentValues.put(KEY_POST_DATE,post.getString("date"));
+            contentValues.put(KEY_POST_DATE,action_date);
             //contentValues.put(KEY_POST_IMAGE,post.getString("imageUrl"));
             contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
             contentValues.put(KEY_POST_TAG,post.getString("post_tag"));
             contentValues.put(KEY_POST_CATEGORY,post.getString("post_category"));
+            contentValues.put(KEY_POST_COORDINATES,post.getString("post_coordinates"));
             //contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
 
             sqLiteDatabase.insert(TABLE_POSTS, null, contentValues);
@@ -678,6 +685,40 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
         return insert;
     }
+
+    public long addResource(JSONObject post) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        Log.d("post_post", String.valueOf(post));
+
+        long insert = 0;
+
+        // TODO: PASS EXTRA FIELDS TO THE LINE BELOW
+        //title,description,date,imageUrl,audioUrl,user_id
+
+        try {
+            contentValues.put(KEY_RES_ID,post.getString("post_id"));
+            contentValues.put(KEY_RES_IMAGE, "");
+            contentValues.put(KEY_RES_AUDIO, post.getString("description"));
+
+
+            sqLiteDatabase.insert(TABLE_RESOURCES, null, contentValues);
+            Log.d("contentValues",contentValues.toString());
+
+            //TODO: GET LastInsertID()
+            //sqLiteDatabase.execSQL("SELECT "+ KEY_POST_ID +" from "+ TABLE_POSTS +" order by "+ KEY_POST_ID +" DESC limit 1 " );
+
+
+            sqLiteDatabase.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return insert;
+    }
+
 
     public long addPosttoProject(JSONObject post) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -818,6 +859,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
         return sqLiteDatabase.update(tableName, contentValues, whereClause,
                 new String[]{String.valueOf(post.getPost_Id())});
     }
+
 
 
 

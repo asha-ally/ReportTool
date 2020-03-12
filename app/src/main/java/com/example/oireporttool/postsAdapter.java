@@ -68,7 +68,7 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
 
         //Log.d("post.post_imageUrl", post.post_imageUrl);
         holder.title.setText(post.getPost_title());
-        holder.description.setText(post.getPost_details());
+        holder.description.setText(post.getPost_details().trim());
         holder.date.setText(post.getRecord_date());
 
 //        if (post.post_imageUrl != null) {
