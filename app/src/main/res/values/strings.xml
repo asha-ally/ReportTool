@@ -19,6 +19,11 @@
     <string name="cancel">Cancel</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
     <string name="take_photo">Take Photo</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="search_hint">Enter tag</string>
+    <string name="action_search">Search</string>
+
+
     <string-array name="project_array">
         <item>Projects</item>
         <item>Dummy Project</item>

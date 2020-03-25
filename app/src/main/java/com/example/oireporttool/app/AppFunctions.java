@@ -34,6 +34,14 @@ public class AppFunctions extends Application {
     }
 
 
+    public static String func_stringpart(String str, int len) {
+
+        String out = (str.trim().length() > len) ? str.trim().substring(0, len) + "..." : str;
+
+        return out;
+    }
+
+
     public static String func_formatDate(int year, int month, int day) {
 
         Calendar cal = Calendar.getInstance();
@@ -50,7 +58,7 @@ public class AppFunctions extends Application {
         if(value.length() == 13){
             Long raw_time_long = Long.parseLong(value);
             java.util.Date new_time = new java.util.Date(raw_time_long);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy"); //, HH:mm
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, HH:mm"); //, HH:mm
             return sdf.format(new_time);
         } else {
             return value;

@@ -1,0 +1,21 @@
+
+Crashes:
+1. GPS_Service.java:60  ==> Requesting GPS before asking for permission
+1b. Source = PostActivity.java:130
+2. JSONException -- PostActivity.java:362  ==> Should have a message for if JSON result = null/0
+3. com.example.oireporttool W/SQLiteConnectionPool: A SQLiteConnection object for database '/data/user/0/com.example.oireporttool/databases/db_notepad_lite' was leaked!  Please fix your application to end transactions in progress properly and to close the database when it is no longer needed.
+4. com.example.oireporttool E/Google Maps Android API: Authorization failure.  Please see https://developers.google.com/maps/documentation/android-api/start for how to correctly set up the map.
+5. DatabaseHelper.java ==> " `" + KEY_POST_ID + "` integer primary key autoincrement," +  ==> "integer" in small case ::: RESOLVED
+6. activity_view_note.xml  ==> Changed paddings (to show date and descriptions), GPS alignment, Buttons positions etc...
+7. activity_main_include.xml  ==> Changed "RecyclerView" width + height to "match_parent"
+
+8. postsAdapter.java:71  ==> Added a new function "func_stringpart()" ==> restrict length of paragraph being displayed kwa RecyclerView
+9. postsAdapter.java:135 | card_row.xml  ==> ADDED rec_project, rec_tag, post_id  ==> to show Project and Type in RecyclerView
+
+.... eeh.. stopped updating here. So MANY changes implemented
+
+
+
+
+
+ 

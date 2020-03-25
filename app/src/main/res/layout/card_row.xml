@@ -13,9 +13,11 @@
     android:layout_margin="@dimen/card_margin"
     android:elevation="3dp"
     card_view:cardCornerRadius="@dimen/card_album_radius">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingRight="@dimen/item_offset"
         >
 
         <ImageView
@@ -55,6 +57,59 @@
 
 
         <TextView
+            android:id="@+id/rec_project"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description"
+            android:layout_toRightOf="@id/thumbnail"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="20dp"
+            android:text="category"
+            android:visibility="visible"
+            android:textStyle="italic|bold"
+            />
+
+        <TextView
+            android:id="@+id/rec_separate_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description"
+            android:layout_toRightOf="@id/rec_project"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="20dp"
+            android:text="/"
+            android:visibility="visible"
+            android:textStyle="italic"
+            android:textColor="@color/colorPrimaryDark"
+            />
+
+
+        <TextView
+            android:id="@+id/rec_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description"
+            android:layout_toRightOf="@id/rec_separate_1"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginBottom="20dp"
+            android:text="type"
+            android:visibility="visible"
+            android:textStyle="italic"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <TextView
+            android:id="@+id/rec_post_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_toRightOf="@id/rec_tag"
+            />
+
+        <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +119,11 @@
             android:layout_toRightOf="@id/thumbnail"
             android:layout_alignParentEnd="true"
             android:text="textView"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            />
+
+
             <!--
             android:layout_marginLeft="200dp"
              tools:layout_editor_absoluteX="96dp"

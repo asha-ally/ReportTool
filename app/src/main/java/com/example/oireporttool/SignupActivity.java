@@ -29,7 +29,6 @@ public class SignupActivity extends AppCompatActivity {
     TextView _loginLink;
     EditText _lname;
     EditText _number;
-    TextView _linkorglogin;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class SignupActivity extends AppCompatActivity {
         _passwordText =findViewById(R.id.input_password1);
         _signupButton =findViewById(R.id.btn_signup);
          _loginLink =findViewById(R.id.link_login);
-         _linkorglogin= findViewById(R.id.link_org_login);
 
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
@@ -66,13 +64,13 @@ public class SignupActivity extends AppCompatActivity {
                 finish();
             }
         });
-        _linkorglogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-             Intent intent= new Intent(getBaseContext(),OrganizationLoginActivity.class);
-             startActivity(intent);
-            }
-        });
+//        _linkorglogin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//             Intent intent= new Intent(getBaseContext(),OrganizationLoginActivity.class);
+//             startActivity(intent);
+//            }
+//        });
 
 
     }
@@ -178,12 +176,15 @@ public class SignupActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 15) {
-            _passwordText.setError("between 4 and 15 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+            _passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
             _passwordText.setError(null);
         }
+
+
+
 
         return valid;
     }

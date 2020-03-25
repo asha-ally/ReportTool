@@ -39,6 +39,7 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
     Context context;
     Bundle ibundle;
     String bundleData;
+    String bundlePostId;
     private BroadcastReceiver broadcastReceiver;
     MapFragment mapFragment;
 
@@ -53,7 +54,7 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_view_note);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
 
@@ -68,9 +69,13 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
         ibundle = getIntent().getExtras();
         longitude=findViewById(R.id.longitude);
         latitude=findViewById(R.id.latitude);
+
         bundleData = (String) ibundle.get("PostData");
+        bundlePostId = (String) ibundle.get("PostId");
+
 //        JSONObject data = ibundle.
         Log.d("bundleData", bundleData);
+        Log.d("bundlePostId", bundlePostId);
 
 
 
@@ -94,9 +99,13 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
                 JSONObject asha = clickedPost.getPostAll();
                 String thePostData = String.valueOf(asha);
                 Log.d("postList asha", String.valueOf(asha));
+
                 Intent intent = new Intent(v.getContext(),PostActivity.class);
+
                 intent.putExtra("PostActivity", String.valueOf(clickedPost));
-                intent.putExtra("PostData", thePostData);
+                intent.putExtra("PostData", bundleData); /*thePostData*/
+                intent.putExtra("PostAction", "_edit");
+                intent.putExtra("PostId", bundlePostId);
                 startActivity(intent);
 
 
@@ -105,9 +114,8 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
         longitude.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               lat= latitude.getText().toString();
-               longi= longitude.getText().toString();
-                DisplayMap(lat,longi);
+//
+                DisplayMap();
 
 
             }
@@ -129,7 +137,7 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
           drawMarker(point);
 
     }
-    public boolean DisplayMap (String lat,String longi){
+    public boolean DisplayMap (){
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
         if(status!= ConnectionResult.SUCCESS){ // Google Play Services are not available
 
@@ -173,35 +181,6 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (broadcastReceiver == null){
-            broadcastReceiver =new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    longitude.append("/n" +intent.getExtras().get("gps_longitude"));
-                    Log.d("coordinates",longitude.toString());
-                    latitude.append("/n" +intent.getExtras().get("gps_latitude"));
-
-
-                }
-            };
-            registerReceiver(broadcastReceiver,new IntentFilter("location_update"));
-        }
-
-
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (broadcastReceiver != null){
-            unregisterReceiver(broadcastReceiver);
-
-        }
-    }
 
     public void getPostId(){
         Bundle bundle=getIntent().getExtras();
@@ -214,10 +193,13 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
     public void displayPost(){
         try {
             JSONObject jsnobject = new JSONObject(bundleData);
+
             Log.d("ka value", jsnobject.getString("post_details"));
+
             tvDescription.setText( jsnobject.getString("post_details"));
             tvDate.setText(jsnobject.getString("record_date"));
-            longitude.setText(jsnobject.getString("post_coordinates"));
+            longitude.setText(jsnobject.getString("post_longitude"));
+            latitude.setText(jsnobject.getString("post_latitude"));
 
         } catch (JSONException e) {
             e.printStackTrace();

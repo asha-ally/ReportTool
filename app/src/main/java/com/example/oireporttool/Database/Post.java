@@ -15,10 +15,15 @@ public class Post {
     public String post_audioUrl;
     public String post_category;
     public String post_tag;
+    public String Text;
     public String post_project;
+    public String post_latitude;
+    public String post_longitude;
 
 
-    public Post(int post_Id, String post_title, String post_details, String record_date, String userId, String post_imageUrl, String post_audioUrl,String post_category,String post_tag,String post_project) {
+
+
+    public Post(int post_Id, String post_title, String post_details, String record_date, String userId, String post_imageUrl, String post_audioUrl, String post_category, String post_tag, String post_project, String post_latitude, String post_longitude,String Text) {
         this.post_Id = post_Id;
         this.post_title = post_title;
         this.post_details = post_details;
@@ -29,12 +34,22 @@ public class Post {
         this.post_category = post_category;
         this.post_tag= post_tag;
         this.post_project = post_project;
+        this.post_longitude = post_longitude;
+        this.post_latitude= post_latitude;
+
     }
 
     public Post() {
 
     }
 
+    public String getText() {
+        return Text;
+    }
+
+    public void setText(String text) {
+        Text = text;
+    }
 
     public int getPost_Id() {
         return post_Id;
@@ -115,6 +130,21 @@ public class Post {
     public void setPost_project(String post_project) {
         this.post_project = post_project;
     }
+    public String getPost_latitude() {
+        return post_latitude;
+    }
+
+    public void setPost_latitude(String post_latitude) {
+        this.post_latitude = post_latitude;
+    }
+
+    public String getPost_longitude() {
+        return post_longitude;
+    }
+
+    public void setPost_longitude(String post_longitude) {
+        this.post_longitude = post_longitude;
+    }
 
 
     public JSONObject getPostAll(){
@@ -126,6 +156,8 @@ public class Post {
             postData.put("post_title", this.post_title);
             postData.put("post_details", this.post_details);
             postData.put("record_date", this.record_date);
+            postData.put("post_longitude", this.post_longitude);
+            postData.put("post_latitude", this.post_latitude);
 
 
         } catch (JSONException e) {

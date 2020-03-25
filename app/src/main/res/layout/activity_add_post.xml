@@ -11,7 +11,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -120,7 +121,20 @@
                 android:entries="@array/tag_array"
                 android:padding="16dp" />
 
+
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvlongitude"
+            android:visibility="gone"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvlatitude"
+            android:visibility="gone"
+            />
 
 
 

@@ -80,6 +80,17 @@
                 android:inputType="textPassword"
                 android:hint="Password"/>
         </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:layout_marginBottom="8dp">-->
+<!--            <EditText android:id="@+id/input_password2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:inputType="textPassword"-->
+<!--                android:hint="@string/confirm_password"/>-->
+<!--        </LinearLayout>-->
 
         <!-- Signup Button -->
         <Button
@@ -99,15 +110,7 @@
             android:clickable="true"
             android:gravity="center"
             android:textSize="16dip"/>
-        <TextView android:id="@+id/link_org_login"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="Sigup as an organization"
-            android:clickable="true"
-            android:gravity="center"
-            android:visibility="gone"
-            android:textSize="16dip"/>
+
 
 
     </LinearLayout>

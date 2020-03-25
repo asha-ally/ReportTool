@@ -9,7 +9,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -26,13 +27,16 @@
 <!--    </androidx.core.widget.NestedScrollView>-->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="55dp"
+        >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@android:color/white"
+        android:padding="@dimen/item_offset"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <RelativeLayout
@@ -60,11 +64,12 @@
                 />
             <TextView
                 android:id="@+id/tvDate"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/item_offset"
                 android:textColor="@android:color/white"
                 android:textSize="21dp"
-                android:text="Tempor incididunt ut labore"
+                android:text="date value here"
                 android:background="@color/colorTransparent"
                 />
 
@@ -90,6 +95,7 @@
             android:textSize="20dp"
             android:paddingTop="10dp"
             android:paddingLeft="10dp"
+            android:visibility="gone"
             />
 
         <LinearLayout
@@ -109,8 +115,8 @@
 
 
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingLeft="10dp">
@@ -119,21 +125,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="7dp"
-                    android:id="@+id/longitude"
-                    android:text=" -1.2838046 "
+                    android:id="@+id/latitude"
+                    android:text="1.8219"
                     android:clickable="true"
-
                     />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/latitude"
-                    android:text="36.8043313"
-
+                    android:paddingBottom="7dp"
+                    android:id="@+id/spacer_latlong"
+                    android:text=", "
+                    android:clickable="false"
+                    android:layout_toRightOf="@id/latitude"
                     />
 
-            </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/longitude"
+                    android:text="36.2921"
+                    android:layout_toRightOf="@id/spacer_latlong"
+                    />
+
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -170,7 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="10dp"
                 android:textAllCaps="false"
                 android:background="@android:color/white"
                 android:textSize="16dp"
@@ -178,7 +193,7 @@
 
             <Button
                 android:id="@+id/btnDelete"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Delete"

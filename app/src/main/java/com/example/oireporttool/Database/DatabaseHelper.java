@@ -72,7 +72,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     // POSTS Table
     public static final String TABLE_POSTS= "npd_posts";
     private static final String KEY_POST_ACC_ID = "user_id";
-    private static final String KEY_POST_ID = "post_Id";
+    public static final String KEY_POST_ID = "post_Id";
     private static final String KEY_POST_SESSION = "post_session";
     private static final String KEY_POST_DETAIL = "post_detail";
     private static final String KEY_POST_DATE = "record_date";
@@ -80,11 +80,12 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     private static final String KEY_POST_TAG="post_tag";
     private static final String KEY_POST_CATEGORY="post_category";
     private static final String KEY_POST_PROJECT="post_project";
-    private static final String KEY_POST_COORDINATES="post_coordinates";
+    private static final String KEY_POST_LONGITUDE="post_longitude";
+    private static final String KEY_POST_LATITUDE="post_latitude";
 
 
     private static final String CREATE_POSTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_POSTS+ " ( " +
-            " `" + KEY_POST_ID + "` INTEGER primary key autoincrement," +
+            " `" + KEY_POST_ID + "` integer primary key autoincrement," +
             " `" + KEY_POST_ACC_ID + "` TEXT DEFAULT 0 NOT NULL," +
             " `" + KEY_POST_SESSION + "` TEXT," +
             " `" + KEY_POST_DETAIL + "` TEXT," +
@@ -93,7 +94,9 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             " `" + KEY_POST_TAG+ "` TEXT ,"  +
             " `" + KEY_POST_CATEGORY+ "` TEXT ,"  +
             " `" + KEY_POST_PROJECT+ "` TEXT ,"  +
-            " `" + KEY_POST_COORDINATES+ "` TEXT "  +
+            " `" + KEY_POST_LONGITUDE+ "` TEXT ,"  +
+            " `" + KEY_POST_LATITUDE+ "` TEXT "  +
+
             ")";
 
     //Resources Table
@@ -161,7 +164,11 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
     /* CUSTOM FUNCTION FOR RANDOM EVENTS*/
     public void customDbAction(){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS+ "; "); //IF EXISTS
+
+        String dropTablePosts = "DROP TABLE IF EXISTS " + TABLE_POSTS+ "; ";
+        //String alterTablePosts = "ALTER TABLE " + TABLE_POSTS + " ADD " + KEY_POST_ID + " TYPE integer primary key autoincrement USING (" + KEY_POST_ID + "::integer);";
+
+        db.execSQL(dropTablePosts); //IF EXISTS
         db.execSQL(CREATE_POSTS_TABLE);
         Log.d("customDbAction", "created");
        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORG);
@@ -610,7 +617,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
      **/
 
 
-    public void addPost(String field_Data, String form_Name, String acc_user_id, String session_id, String record_id) {
+    public void addPostXX(String field_Data, String form_Name, String acc_user_id, String session_id, String record_id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
 
@@ -644,17 +651,84 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
 
     }
-    public long addPost(JSONObject post) {
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+
+    public String post_Edit(JSONObject post) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         Log.d("post_post", String.valueOf(post));
+
         Timestamp action_time = new Timestamp(System.currentTimeMillis());
         String action_time_id = String.valueOf(action_time.getTime());
         String action_date = func_formatDateFromString(action_time_id);
 
-        long insert = 0;
+        String insert = "0";
+        String image_url = "";
 
+
+
+        try {
+            String post_id = String.valueOf(post.getInt("post_Id"));
+
+            contentValues.put(KEY_POST_DETAIL, post.getString("description"));
+            contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
+            contentValues.put(KEY_POST_TAG,post.getString("post_tag"));
+            contentValues.put(KEY_POST_CATEGORY,post.getString("post_category"));
+            //contentValues.put(KEY_POST_LONGITUDE,post.getString("post_longitude"));
+            //contentValues.put(KEY_POST_LATITUDE,post.getString("post_latitude"));
+            //contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
+
+            db.update(TABLE_POSTS, contentValues, KEY_POST_ID + " = ? ",
+                    new String[] { post_id });
+
+            db.close();
+
+            insert = post_id;
+            image_url = post.getString("image_url");
+
+            if(image_url.length() > 4){
+
+                JSONObject resData = new JSONObject();
+
+                try {
+                    resData.put("post_id", insert);
+                    resData.put("image_url", image_url);
+                    resData.put("description", "");
+
+                    addResource(resData);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return insert;
+    }
+
+
+
+
+
+    public String post_Add(JSONObject post) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        Log.d("post_post", String.valueOf(post));
+
+        Timestamp action_time = new Timestamp(System.currentTimeMillis());
+        String action_time_id = String.valueOf(action_time.getTime());
+        String action_date = func_formatDateFromString(action_time_id);
+
+        String insert = "0";
+        String image_url = "";
         // TODO: PASS EXTRA FIELDS TO THE LINE BELOW
     //title,description,date,imageUrl,audioUrl,user_id
 
@@ -667,17 +741,37 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
             contentValues.put(KEY_POST_TAG,post.getString("post_tag"));
             contentValues.put(KEY_POST_CATEGORY,post.getString("post_category"));
-            contentValues.put(KEY_POST_COORDINATES,post.getString("post_coordinates"));
+            contentValues.put(KEY_POST_LONGITUDE,post.getString("post_longitude"));
+            contentValues.put(KEY_POST_LATITUDE,post.getString("post_latitude"));
             //contentValues.put(KEY_POST_AUDIO,post.getString("audioUrl"));
 
             sqLiteDatabase.insert(TABLE_POSTS, null, contentValues);
-            Log.d("contentValues",contentValues.toString());
+            //Log.d("post_contentValues",contentValues.toString());
 
-            //TODO: GET LastInsertID()
-            //sqLiteDatabase.execSQL("SELECT "+ KEY_POST_ID +" from "+ TABLE_POSTS +" order by "+ KEY_POST_ID +" DESC limit 1 " );
+            insert = getLastInsertId("npd_posts", "post_Id");
+            image_url = post.getString("image_url");
 
+            if(image_url.length() > 4){
+
+                JSONObject resData = new JSONObject();
+
+                try {
+                    resData.put("post_id", insert);
+                    resData.put("image_url", image_url);
+                    resData.put("description", "");
+
+                    addResource(resData);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
 
             sqLiteDatabase.close();
+
+            //String val = databaseHelper.getLastInsertId("npd_posts", "post_Id");
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -686,29 +780,52 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
         return insert;
     }
 
-    public long addResource(JSONObject post) {
+
+
+
+    public String getLastInsertId(String d_table, String d_column){
+
+        SQLiteDatabase db   = this.getReadableDatabase();
+        String selectQuery  = "SELECT  * FROM " + d_table + "  ";
+        Cursor cursor       = db.rawQuery(selectQuery, null);
+
+        String value = "";
+        String key;
+
+        if(cursor.moveToLast()){
+            key = cursor.getColumnName(0);
+            value = cursor.getString( cursor.getColumnIndex(key) );
+
+        }
+
+        db.close();
+
+        return value;
+    }
+
+
+
+    public void addResource(JSONObject post) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        Log.d("post_post", String.valueOf(post));
+        Log.d("post_resource", String.valueOf(post));
 
-        long insert = 0;
+        String insert = "0";
 
         // TODO: PASS EXTRA FIELDS TO THE LINE BELOW
         //title,description,date,imageUrl,audioUrl,user_id
 
         try {
-            contentValues.put(KEY_RES_ID,post.getString("post_id"));
-            contentValues.put(KEY_RES_IMAGE, "");
+            contentValues.put(KEY_RES_ID, post.getString("post_id"));
+            contentValues.put(KEY_RES_IMAGE, post.getString("image_url"));
             contentValues.put(KEY_RES_AUDIO, post.getString("description"));
 
-
             sqLiteDatabase.insert(TABLE_RESOURCES, null, contentValues);
-            Log.d("contentValues",contentValues.toString());
+            Log.d("resource_Values", contentValues.toString());
 
             //TODO: GET LastInsertID()
             //sqLiteDatabase.execSQL("SELECT "+ KEY_POST_ID +" from "+ TABLE_POSTS +" order by "+ KEY_POST_ID +" DESC limit 1 " );
-
 
             sqLiteDatabase.close();
 
@@ -716,7 +833,7 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        return insert;
+        /*return insert;*/
     }
 
 
@@ -763,13 +880,13 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
     // Getting All RECORDS FROM A TABLE
 
-    public JSONObject getRecords( String tbl_name) {
+    public JSONObject getRecords( String tbl_name, String tbl_sort_column ) {
 
         JSONArray recsAll = new JSONArray();
         JSONObject recsCurrent = null;
 
 
-        String selectQuery  = "SELECT  * FROM " + tbl_name + "  ";
+        String selectQuery  = "SELECT  * FROM " + tbl_name + " ORDER BY " + tbl_sort_column + " DESC; ";
         SQLiteDatabase db   = this.getReadableDatabase();
         Cursor cursor       = db.rawQuery(selectQuery, null);
 

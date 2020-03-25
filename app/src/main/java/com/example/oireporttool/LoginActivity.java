@@ -44,21 +44,31 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-      _emailText = findViewById(R.id.input_email);_emailText.setText("asha@email.com");
-      _passwordText = findViewById(R.id.input_password);_passwordText.setText("123456");
+        if (sharedPref!= null){
+
+        }
+
+      _emailText = findViewById(R.id.input_email);_emailText.setText(""); /*rage@email.com*/
+      _passwordText = findViewById(R.id.input_password);_passwordText.setText(""); /*123456*/
       _loginButton =findViewById(R.id.btn_login);
       _signupLink =findViewById(R.id.link_signup);
       context=this;
       databaseHelper=new DatabaseHelper(this);
 
-       //databaseHelper.customDbAction();
+//       databaseHelper.customDbAction();
+
+        //String val = databaseHelper.getLastInsertId("npd_posts", "post_Id");
+        //Log.d("last_post",val);
 
         //sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
         sharedPref = getSharedPreferences("loginPrefs", MODE_PRIVATE);
 
+        if(sharedPref.getBoolean("logged",false)){
 
-//      String prefs= sharedPref.getAll().toString();
-//      Log.d("data",prefs);
+
+            Intent intent1 = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent1);}
+
 
       _loginButton.setOnClickListener(new View.OnClickListener() {
           @Override
@@ -83,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
 
                       String prefs= sharedPref.getAll().toString();
                       Log.d("data",prefs);
+                      sharedPref.edit().putBoolean("logged",true).apply();
+
 
 
                   } catch (JSONException e) {
@@ -123,8 +135,6 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
-
-
 
 
         Intent intent1 = new Intent(getApplicationContext(),MainActivity.class);

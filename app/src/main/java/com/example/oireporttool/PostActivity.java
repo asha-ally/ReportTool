@@ -47,6 +47,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,12 +80,24 @@ public class PostActivity extends AppCompatActivity {
     private String audioUrl;
     private ImageView imgView;
     private String Url;
+
     private String user_id;
     int postId;
+    private String post_projects;
+    private String post_tag;
+    private String post_category;
+    private String post_longitude;
+    private String post_latitude;
+
+
+
     private String POSTS_API_URL="http://10.0.2.2/oireporting_web/ort_orgs_api.php";
 
-    Bundle ibundle;
+    Bundle bundle;
     String bundleData;
+    String form_action;
+    String form_data;
+    String form_post_id;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     TextView textFile;
@@ -99,8 +112,8 @@ public class PostActivity extends AppCompatActivity {
     Spinner tag;
 
     DatabaseHelper databaseHelper;
-    String longitude;
-    String latitude;
+    TextView tvlongitude;
+    TextView tvlatitude;
 
 
 
@@ -111,26 +124,40 @@ public class PostActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        bundle = getIntent().getExtras();
+        form_action = bundle.getString("PostAction");
+        form_data = bundle.getString("PostData");
+        form_post_id = bundle.getString("PostId");
+
+        Log.d("form_data", form_data);
+
         etDescription=findViewById(R.id.etDescription);
+
         imageView=findViewById(R.id.imgView);
         imgView=findViewById(R.id.thumbnail);
         databaseHelper= new DatabaseHelper(this);
         btnSave=findViewById(R.id.btnSave);
         prefs= getSharedPreferences("loginPrefs", MODE_PRIVATE);
-        user_id=prefs.getString("id","1");
+        user_id = prefs.getString("id","1");
         btnAddphoto=findViewById(R.id.btnAddPhoto);
         btnAddVoiceNote=findViewById(R.id.btnAddVoiceNote);
         btnInsertFile=findViewById(R.id.btnInsertFile);
         projects= findViewById(R.id.project_array);
         tag= findViewById(R.id.tag_array);
         category= findViewById(R.id.category_array);
+        tvlongitude=findViewById(R.id.tvlongitude);
+        tvlatitude=findViewById(R.id.tvlatitude);
 
+        Intent intent = new Intent(getApplicationContext(),GPS_Service.class);
+        startService(intent);
 
         getPostId();
 
         context=this;
         displayPost();
         CheckPermissions();
+
+
 
 
         btnAddphoto.setOnClickListener(new View.OnClickListener() {
@@ -158,64 +185,69 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
+
             public void onClick(View v) {
 
 
+
                 description= etDescription.getText().toString();
-                Intent intent = new Intent(getApplicationContext(),GPS_Service.class);
-                startService(intent);
 
-                String post_projects= projects.getSelectedItem().toString();
-                String post_tag = tag.getSelectedItem().toString();
-                String post_category = category.getSelectedItem().toString();
 
-                long result = 0;
-                if (broadcastReceiver == null){
-                    broadcastReceiver =new BroadcastReceiver() {
-                        @Override
-                        public void onReceive(Context context, Intent intent) {
+                post_projects= projects.getSelectedItem().toString();
+                post_tag = tag.getSelectedItem().toString();
+                post_category = category.getSelectedItem().toString();
+                post_longitude = tvlongitude.getText().toString();
+                post_latitude= tvlatitude.getText().toString();
 
-                            longitude = String.valueOf(intent.getExtras().get("gps_longitude"));
-                            latitude = String.valueOf(intent.getExtras().get("gps_latitude"));
 
-                        }
-                    };
-                    registerReceiver(broadcastReceiver,new IntentFilter("location_update"));
-                }
-                LatLng post_coordinates = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-
+                String result = "0";
+//
 
                 //PostActivity post =new PostActivity(title,description,date,imageUrl,audioUrl,user_id);
                 //databaseHelper.addPost(post);
 
                 JSONObject post_b = new JSONObject();
                 try {
+
+                    if(form_action.equals("_edit")){
+                        post_b.put("post_id", form_post_id);
+                    }
                     //post_b.put("imageUrl", Url);
                     post_b.put("user_id", user_id);
                     post_b.put("description", description);
                     post_b.put("post_project",post_projects);
                     post_b.put("post_tag",post_tag);
                     post_b.put("post_category",post_category);
-                    post_b.put("post_coordinates",post_coordinates);
+                    post_b.put("post_longitude",post_longitude);
+                    post_b.put("post_latitude",post_latitude);
+                    post_b.put("image_url", imageUrl);
+//                    Log.d("url",imageUrl);
 
-                    result = databaseHelper.addPost(post_b);
+
+                    if(form_action.equals("_edit")){
+                        result = databaseHelper.post_Edit(post_b);
+                    } else {
+                        result = databaseHelper.post_Add(post_b);
+                    }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Log.d("post_result", String.valueOf(result));
 
-                    finish();
+                refreshMainActivity();
 
-                postNote("none",description,user_id);
+                finish();
 
 
-                Intent i = new Intent(getApplicationContext(),GPS_Service.class);
-                stopService(i);
+                //postNote("none",description,user_id);
 
+                stopService(intent);
 
             }
 
@@ -223,7 +255,29 @@ public class PostActivity extends AppCompatActivity {
         });
 
 
+
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (broadcastReceiver == null){
+            broadcastReceiver =new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    tvlongitude.append("" + intent.getExtras().get("gps_longitude")); /*"/n" +*/
+                    tvlatitude.append("" + intent.getExtras().get("gps_latitude"));
+                    Log.d("coordinates",tvlongitude.toString());
+
+
+
+                }
+            };
+            registerReceiver(broadcastReceiver,new IntentFilter("location_update"));
+        }
+
+
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -233,11 +287,23 @@ public class PostActivity extends AppCompatActivity {
 
         }
     }
+
+
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds options to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
+
+    public void refreshMainActivity(){
+
+        /*MainActivity.getInstance().refreshList();*/
+        MainActivity.getmInstanceActivity().refreshList();
+    }
+
+
     private String selectImage() {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
         AlertDialog.Builder builder = new AlertDialog.Builder(PostActivity.this);
@@ -255,7 +321,7 @@ public class PostActivity extends AppCompatActivity {
                 }
                 else if (options[item].equals("Choose from Gallery"))
                 {
-                    Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent intent = new   Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, 2);
                 }
                 else if (options[item].equals("Cancel")) {
@@ -264,8 +330,11 @@ public class PostActivity extends AppCompatActivity {
             }
         });
         builder.show();
+
         return imageUrl;
     }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -284,6 +353,9 @@ public class PostActivity extends AppCompatActivity {
                     bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),
                             bitmapOptions);
                     imageView.setImageBitmap(bitmap);
+                    Intent intent =new Intent(getBaseContext(),MainActivity.class);
+                    intent.putExtra("data",bitmap);
+
                     String path = android.os.Environment
                             .getExternalStorageDirectory()
                             + File.separator
@@ -292,8 +364,8 @@ public class PostActivity extends AppCompatActivity {
                     f.delete();
                     OutputStream outFile = null;
                     File file = new File(path, String.valueOf(System.currentTimeMillis()) + ".jpg");
-                    imageUrl= String.valueOf(file);
-                    Log.d("boomerang",imageUrl);
+                    imageUrl = String.valueOf(file);
+                    Log.d("image_path_a",imageUrl);
                     try {
                         outFile = new FileOutputStream(file);
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outFile);
@@ -318,9 +390,9 @@ public class PostActivity extends AppCompatActivity {
                 String picturePath = c.getString(columnIndex);
                 c.close();
                 Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
-                Log.w("path", picturePath+"");
+                Log.w("image_path_b", picturePath+"");
                 imageView.setImageBitmap(thumbnail);
-
+                imageUrl = picturePath;
             }
         }
     }
@@ -328,15 +400,34 @@ public class PostActivity extends AppCompatActivity {
 
 
     public void getPostId(){
-        Bundle bundle=getIntent().getExtras();
-        if(bundle!=null){
-            postId=bundle.getInt("KEY_POST_ID",0);
+        /*Bundle bundle = getIntent().getExtras();*/
+        if(bundle != null){
+            postId = bundle.getInt("KEY_POST_ID",0);
         }
     }
 
     public void displayPost(){
-        Post post= new Post();
-        JSONObject jsnobject=post.getPostAll();
+
+        String post = form_data;
+
+        try {
+            //JSONArray jsonArray = new JSONArray(post);
+            JSONObject jsonObject = new JSONObject(post);
+            Log.d("displayPostObject", String.valueOf(jsonObject));
+            Log.d("displayPostObject", jsonObject.getString("post_Id"));
+
+            etDescription.setText( jsonObject.getString("post_details"));
+            //etTitle.setText(jsonObject.getString("record_date"));
+            tvlongitude.setText(jsonObject.getString("post_longitude"));
+            tvlatitude.setText(jsonObject.getString("post_latitude"));
+            //projects.setSelection();
+        }
+        catch (JSONException e) {
+            Log.e("displayPost", e.getMessage());
+        }
+
+        /*Post post= new Post();
+        JSONObject jsnobject = post.getPostAll();
         try {
             etDescription.setText( jsnobject.getString("post_details"));
             Log.d("edited", jsnobject.getString("post_details"));
@@ -344,25 +435,10 @@ public class PostActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_IMAGE_CAPTURE:
-//                if (grantResults.length> 0) {
-//                    boolean permissionToRecord = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-//                    boolean permissionToStore = grantResults[1] ==  PackageManager.PERMISSION_GRANTED;
-//                    if (permissionToRecord && permissionToStore) {
-//                        Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
-//                    } else {
-//                        Toast.makeText(getApplicationContext(),"Permission Denied", Toast.LENGTH_LONG).show();
-//                    }
-//                }
-//                break;
-//        }
-//    }
+
     public boolean CheckPermissions() {
             if (Build.VERSION.SDK_INT >=23 && ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this,ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
 
@@ -371,10 +447,6 @@ public class PostActivity extends AppCompatActivity {
             }
             return false;
 
-//        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-//        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
-//        int result2=ContextCompat.checkSelfPermission(getApplicationContext(),ACCESS_FINE_LOCATION);
-//        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -398,7 +470,7 @@ public class PostActivity extends AppCompatActivity {
             public void onResponse(String s) {
                 Log.d("post response",s);
                 try {
-                    JSONObject jsonObject=new JSONObject(s);
+                    JSONObject jsonObject = new JSONObject(s);
                     int user_id=jsonObject.getInt("user_id");
                     String title= jsonObject.getString("title");
                     String description=jsonObject.getString("description");

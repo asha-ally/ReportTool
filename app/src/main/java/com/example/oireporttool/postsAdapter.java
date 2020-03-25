@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.example.oireporttool.Database.DatabaseHelper;
 import com.example.oireporttool.Database.Post;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Externalizable;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.oireporttool.app.AppFunctions.func_formatDateFromString;
+import static com.example.oireporttool.app.AppFunctions.func_stringpart;
 import static java.lang.System.currentTimeMillis;
 
 
@@ -41,19 +43,52 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
     private ArrayList<Post> postList; //= new ArrayList<>();
     public static final String SHARE_DESCRIPTION = "Look at this new post";
     public static final String HASHTAG_CANDYCODED = " #Nataka";
+    private List<Post> postListFiltered;
     private List<Post> animalListFiltered;
 
 
     public postsAdapter(Context mContext, ArrayList<Post> postList) {
         this.context = mContext;
         this.postList= postList;
+        this.postListFiltered = postList;
     }
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if(charString.isEmpty()){
+                    postListFiltered=postList;
+                }else{
+                    List<Post> filteredList = new ArrayList<>();
+                    for(Post row:postList){
+//charSequence.toString().toLowerCase();
+                        if(row.getPost_details().toLowerCase().contains(charSequence.toString().toLowerCase())){
+                            filteredList.add(row);
+                        }
+                    }
+                    postListFiltered=filteredList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = postListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                postListFiltered = (ArrayList<Post> )filterResults.values;
+                notifyDataSetChanged();
+
+            }
+        };}
 
     /*@NonNull*/
     @Override
     public postsAdapter.myViewHandler onCreateViewHolder( ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_row, parent, false);
+
 
 
 
@@ -64,22 +99,29 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
 
     @Override
     public void onBindViewHolder( postsAdapter.myViewHandler holder, int position) {
-        Post post = postList.get(position);
+        Post post = postListFiltered.get(position);
 
         //Log.d("post.post_imageUrl", post.post_imageUrl);
-        holder.title.setText(post.getPost_title());
-        holder.description.setText(post.getPost_details().trim());
-        holder.date.setText(post.getRecord_date());
+        String rec_details = func_stringpart(post.getPost_details(), 150);
 
-//        if (post.post_imageUrl != null) {
-//            Glide.with(holder.itemView.getContext()).load(post.post_imageUrl).into(holder.thumbnail);
-//        }
+        /*holder.title.setText(post.getPost_title());*/
+        holder.title.setText(post.getRecord_date());
+        holder.description.setText(rec_details);
+        holder.date.setText(post.getRecord_date());
+        holder.rec_project.setText(post.getPost_project());
+        holder.rec_tag.setText(post.getPost_tag());
+        holder.rec_post_id.setText( String.valueOf(post.getPost_Id()) );
+
+        if (post.post_imageUrl != null) {
+            Glide.with(holder.itemView.getContext()).load(post.post_imageUrl).into(holder.thumbnail);
+        }
 
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPopupMenu(holder.overflow);
+//
             }
 
     });
@@ -93,10 +135,7 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         popup.show();
     }
 
-    @Override
-    public Filter getFilter() {
-            return null;
-    }
+
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
@@ -123,13 +162,15 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
     public int getItemCount() {
         Log.d("waterlilies",String.valueOf(postList.size()));
 
-        return postList.size();
+//        return postList.size();
+        return postListFiltered.size();
     }
 
 
     public class myViewHandler extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView title, description,date;
+        public TextView title, description, date, rec_project, rec_tag, rec_post_id;
         public ImageView thumbnail, overflow;
+
         public myViewHandler(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
@@ -137,6 +178,10 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
             description = itemView.findViewById(R.id.description);
             thumbnail = itemView.findViewById(R.id.thumbnail);
             overflow = itemView.findViewById(R.id.overflow);
+            rec_project = itemView.findViewById(R.id.rec_project);
+            rec_tag = itemView.findViewById(R.id.rec_tag);
+            rec_post_id = itemView.findViewById(R.id.rec_post_id);
+
             itemView.setOnClickListener(this);
 
         }
@@ -149,15 +194,25 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
 
             JSONObject asha = clickedPost.getPostAll();
             String thePostData = String.valueOf(asha);
+            String thePost_id = "";
 
-            Log.d("postList", String.valueOf(clickedPost));
-            Log.d("postList asha", String.valueOf(asha));
+            try {
+                thePost_id = asha.getString("post_Id");
 
-            Intent intent = new Intent(v.getContext(),ViewPost.class);
-            intent.putExtra("PostActivity", String.valueOf(clickedPost));
-            intent.putExtra("PostData", thePostData);
+                Log.d("postList", String.valueOf(clickedPost));
+                Log.d("postList asha", String.valueOf(asha));
 
-            v.getContext().startActivity(intent);
+                Intent intent = new Intent(v.getContext(),ViewPost.class);
+                intent.putExtra("PostActivity", String.valueOf(clickedPost));
+                intent.putExtra("PostData", thePostData);
+                intent.putExtra("PostId", thePost_id);
+
+                v.getContext().startActivity(intent);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
 
 
 
@@ -174,5 +229,6 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         context.startActivity(shareIntent);
 
     }
+
 
 }
