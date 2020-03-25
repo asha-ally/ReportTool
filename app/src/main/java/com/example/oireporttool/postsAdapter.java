@@ -115,6 +115,9 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.myViewHandle
         if (post.post_imageUrl != null) {
             Glide.with(holder.itemView.getContext()).load(post.post_imageUrl).into(holder.thumbnail);
         }
+        else {
+            holder.thumbnail.setVisibility(View.GONE);
+        }
 
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {

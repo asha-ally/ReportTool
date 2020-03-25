@@ -671,7 +671,6 @@ public class DatabaseHelper extends  SQLiteOpenHelper {
 
         try {
             String post_id = String.valueOf(post.getInt("post_Id"));
-
             contentValues.put(KEY_POST_DETAIL, post.getString("description"));
             contentValues.put(KEY_POST_PROJECT,post.getString("post_project"));
             contentValues.put(KEY_POST_TAG,post.getString("post_tag"));

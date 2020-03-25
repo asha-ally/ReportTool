@@ -5,10 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -45,6 +48,7 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
 
     int postId;
     GoogleMap mGoogleMap;
+    ImageView iview;
     String longi;
     String lat;
 
@@ -69,6 +73,7 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
         ibundle = getIntent().getExtras();
         longitude=findViewById(R.id.longitude);
         latitude=findViewById(R.id.latitude);
+        iview=findViewById(R.id.post_imageview);
 
         bundleData = (String) ibundle.get("PostData");
         bundlePostId = (String) ibundle.get("PostId");
@@ -200,6 +205,7 @@ public class ViewPost extends AppCompatActivity implements OnMapReadyCallback {
             tvDate.setText(jsnobject.getString("record_date"));
             longitude.setText(jsnobject.getString("post_longitude"));
             latitude.setText(jsnobject.getString("post_latitude"));
+
 
         } catch (JSONException e) {
             e.printStackTrace();

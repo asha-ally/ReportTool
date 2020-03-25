@@ -202,6 +202,7 @@ public class PostActivity extends AppCompatActivity {
                 post_category = category.getSelectedItem().toString();
                 post_longitude = tvlongitude.getText().toString();
                 post_latitude= tvlatitude.getText().toString();
+//                imageUrl= selectImage();
 
 
                 String result = "0";
@@ -225,7 +226,7 @@ public class PostActivity extends AppCompatActivity {
                     post_b.put("post_longitude",post_longitude);
                     post_b.put("post_latitude",post_latitude);
                     post_b.put("image_url", imageUrl);
-//                    Log.d("url",imageUrl);
+                    Log.d("url",imageUrl);
 
 
                     if(form_action.equals("_edit")){
@@ -292,7 +293,7 @@ public class PostActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds options to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+//        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -342,19 +343,21 @@ public class PostActivity extends AppCompatActivity {
             if (requestCode == 1) {
                 File f = new File(Environment.getExternalStorageDirectory().toString());
                 for (File temp : f.listFiles()) {
+//                    if(f.exists()){
                     if (temp.getName().equals("temp.jpg")) {
                         f = temp;
                         break;
                     }
                 }
+
                 try {
                     Bitmap bitmap;
                     BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
                     bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),
                             bitmapOptions);
                     imageView.setImageBitmap(bitmap);
-                    Intent intent =new Intent(getBaseContext(),MainActivity.class);
-                    intent.putExtra("data",bitmap);
+//                    Intent intent =new Intent(getBaseContext(),MainActivity.class);
+//                    intent.putExtra("data",bitmap);
 
                     String path = android.os.Environment
                             .getExternalStorageDirectory()
@@ -365,7 +368,7 @@ public class PostActivity extends AppCompatActivity {
                     OutputStream outFile = null;
                     File file = new File(path, String.valueOf(System.currentTimeMillis()) + ".jpg");
                     imageUrl = String.valueOf(file);
-                    Log.d("image_path_a",imageUrl);
+//                    Log.d("image_path_a",imageUrl);
                     try {
                         outFile = new FileOutputStream(file);
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outFile);
